@@ -1,0 +1,5 @@
+192.168.0.4\sqlexpress,Illy Santafe,3860
+192.168.1.200\sqlexpress,Df Aeropuerto,3840
+192.168.1.110\sqlexpress,Df Unicentro,3830
+172.19.45.42\sqlexpress,Amarti Unicentro,1892
+------------------------------------------

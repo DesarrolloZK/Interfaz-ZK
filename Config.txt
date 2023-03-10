@@ -1,0 +1,5 @@
+Query:SELECT dbo.CHECKS.CheckNumber, dbo.CHECK_DETAIL.DetailPostingTime, dbo.MAJOR_GROUP.ObjectNumber AS Expr1, dbo.CHECK_DETAIL.ObjectNumber AS PPD, dbo.MENU_ITEM_DETAIL.DefSequenceNum, dbo.CHECK_DETAIL.SalesCount, dbo.CHECK_DETAIL.Total, dbo.CHECK_DETAIL.DetailType, dbo.CHECKS.AutoGratuity, dbo.CHECKS.Other, dbo.CHECKS.SubTotal,dbo.CHECKS.CheckClose FROM dbo.MENU_ITEM_DETAIL INNER JOIN dbo.MENU_ITEM_DEFINITION ON dbo.MENU_ITEM_DETAIL.MenuItemDefID = dbo.MENU_ITEM_DEFINITION.MenuItemDefID INNER JOIN dbo.MAJOR_GROUP INNER JOIN dbo.MENU_ITEM_MASTER ON dbo.MAJOR_GROUP.ObjectNumber = dbo.MENU_ITEM_MASTER.MajGrpObjNum ON dbo.MENU_ITEM_DEFINITION.MenuItemMasterID = dbo.MENU_ITEM_MASTER.MenuItemMasterID RIGHT OUTER JOIN dbo.CHECK_DETAIL INNER JOIN dbo.CHECKS ON dbo.CHECK_DETAIL.CheckID = dbo.CHECKS.CheckID ON dbo.MENU_ITEM_DETAIL.CheckDetailID = dbo.CHECK_DETAIL.CheckDetailID ORDER BY CheckNumber
+IpoConsumo:8
+Ftp:181.48.67.100
+Usuario:AdministradoR
+Password:!MiCros2022%
