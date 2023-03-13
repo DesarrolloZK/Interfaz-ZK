@@ -131,7 +131,7 @@ class Archivos():
                 for i in datos:
                     wm.write(f'{i[0]};{i[1]};{i[2]};{i[3]};{i[4]};{i[5]};{i[6]};{i[7]};{i[8]};{i[9]}\n')
                 wm.close()
-                return f'Estado: Reporte {fecha} Creado | Ftp: (self.enviar_a_Ftp(propiedad,ofi,fecha,ip,user,password))' 
+                return f'Estado: Reporte {fecha} Creado | Ftp: {self.enviar_a_Ftp(propiedad,ofi,fecha,ip,user,password)}' 
         try:
             os.mkdir(f'Reportes/{propiedad}-{ofi}')
             return crear()

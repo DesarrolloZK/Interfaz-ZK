@@ -132,7 +132,7 @@ class CtrlReportes():
         pass
 
     def analizarDb(self,sName,prop,ofi,repDia)->None:   
-        #try:
+        try:
             datos=self.__ctcon.consultar(sName,self.__consulta)
             if len(datos)!=0:
                 consulDia,vtas=[],[]
@@ -149,12 +149,12 @@ class CtrlReportes():
                     print(arc().reportes(vtas,prop,ofi,(self.__hoy-timedelta(days=1)).strftime('%d%m%Y'),self.__ipFtp,self.__userFtp,self.__passFtp))
                 else:
                     vtas=arc.traerConsultaDiaria(prop,ofi)
-                    #vtas=self.convertir_Datos(vtas)
+                    vtas=self.convertir_Datos(vtas)
                     vtas=self.ordenar_Informacion(vtas,ofi)
                     print(arc().reportes(vtas,prop,ofi,(self.__hoy-timedelta(days=1)).strftime('%d%m%Y'),self.__ipFtp,self.__userFtp,self.__passFtp))
             else: print('No hay datos para Crear el reporte')
-        #except Exception as e:
-            #print(f'Error en el analisis de la Db\n Descripcion: {e}')
+        except Exception as e:
+            print(f'Error en el analisis de la Db\n Descripcion: {e}')
 
     def ordenar_Informacion(self,vtas,ofi)->list:
         info=self.separar_Descuentos(vtas)
@@ -162,10 +162,6 @@ class CtrlReportes():
         vtasf=self.aplicar_Descuentos(info[0],info[1])        
         del info,vtas
         vtasf=self.suma_Productos(vtasf)
-        aux=0
-        for x in vtasf:
-            aux+=x[6]
-        print(aux)
         vtasf=self.arreglar_Sushis(vtasf,ofi,prop)
         vtasf=self.orden_Final(vtasf,ofi)
         vtasf=self.adicionar_ConceptoJerarquia(vtasf,ofi)
@@ -174,6 +170,7 @@ class CtrlReportes():
         vtasf=self.adicionar_Definiciones(vtasf)
         vtasf.append(self.adicionar_IpoConsumo(ofi))
         vtasf=self.arreglar_Domicilios(vtasf)
+        vtasf=self.arreglar_Propina(vtasf)
         return vtasf
 
     def separar_Descuentos(self,vtas)->list:
@@ -323,19 +320,26 @@ class CtrlReportes():
                 break
         return vtasf
 
+    def arreglar_Propina(self,vtasf)->list:
+        for x in vtasf:
+            if x[0]=='0007':
+                x[3]=''
+                break
+        return vtasf
+
     def rutina(self)->str:
         self.__conf=arc().configuraciones()
         self.cargarConfig()
         puntos=ctcon().getConexiones()
         for i in puntos:
-            #if self.comprobar_Reportes(i[1],i[2]):
+            if self.comprobar_Reportes(i[1],i[2]):
                 print(f'Creando->{i[1]}:')
-                if self.__hoy.day==9: self.analizarDb(i[0],i[1],i[2],True)
-                elif self.__hoy.day<11: self.analizarDb(i[0],i[1],i[2],False)
-                elif self.__hoy.day==11: self.analizarDb(i[0],i[1],i[2],False)
-                elif self.__hoy.day>11: self.analizarDb(i[0],i[1],i[2],True)
+                if self.__hoy.day==1: self.analizarDb(i[0],i[1],i[2],True)
+                elif self.__hoy.day<10: self.analizarDb(i[0],i[1],i[2],False)
+                elif self.__hoy.day==10: self.analizarDb(i[0],i[1],i[2],False)
+                elif self.__hoy.day>10: self.analizarDb(i[0],i[1],i[2],True)
                 else: print('Error inesperado')
-            #else: print(f'{i[1]}->Reporte existente')
+            else: print(f'{i[1]}->Reporte existente')
         return f'Rutina Terminada: {self.__hoy}'
 
 if __name__=='__main__':
