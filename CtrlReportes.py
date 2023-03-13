@@ -159,8 +159,7 @@ class CtrlReportes():
     def ordenar_Informacion(self,vtas,ofi)->list:
         info=self.separar_Descuentos(vtas)
         prop=self.calcular_Propinas(info[0],ofi)
-        vtasf=self.aplicar_Descuentos(info[0],info[1])        
-        #del info,vtas
+        vtasf=self.aplicar_Descuentos(info[0],info[1])
         vtasf=self.suma_Productos(vtasf)
         vtasf=self.arreglar_Sushis(vtasf,ofi,prop)
         vtasf=self.orden_Final(vtasf,ofi)
@@ -171,6 +170,8 @@ class CtrlReportes():
         vtasf.append(self.adicionar_IpoConsumo(ofi))
         vtasf=self.arreglar_Domicilios(vtasf)
         vtasf=self.arreglar_Propina(vtasf)
+        vtasf=self.arreglar_Negativos(vtasf)
+        del info,vtas
         return vtasf
 
     def separar_Descuentos(self,vtas)->list:
@@ -325,6 +326,14 @@ class CtrlReportes():
             if x[0]=='0007':
                 x[3]=''
                 break
+        return vtasf
+
+    def arreglar_Negativos(self,vtasf)->list:
+        for x in vtasf:
+            if type(x[8])!=str and type(x[9])!=str:
+                if x[8]<0 or x[9]<0:
+                    x[8]=abs(x[8])
+                    x[9]=abs(x[9])
         return vtasf
 
     def rutina(self)->str:
