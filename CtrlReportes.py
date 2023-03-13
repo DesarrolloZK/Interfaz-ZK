@@ -160,7 +160,7 @@ class CtrlReportes():
         info=self.separar_Descuentos(vtas)
         prop=self.calcular_Propinas(info[0],ofi)
         vtasf=self.aplicar_Descuentos(info[0],info[1])        
-        del info,vtas
+        #del info,vtas
         vtasf=self.suma_Productos(vtasf)
         aux=0
         for x in vtasf:
@@ -328,14 +328,14 @@ class CtrlReportes():
         self.cargarConfig()
         puntos=ctcon().getConexiones()
         for i in puntos:
-            #if self.comprobar_Reportes(i[1],i[2]):
+            if self.comprobar_Reportes(i[1],i[2]):
                 print(f'Creando->{i[1]}:')
-                if self.__hoy.day==9: self.analizarDb(i[0],i[1],i[2],True)
-                elif self.__hoy.day<11: self.analizarDb(i[0],i[1],i[2],False)
-                elif self.__hoy.day==11: self.analizarDb(i[0],i[1],i[2],False)
-                elif self.__hoy.day>11: self.analizarDb(i[0],i[1],i[2],True)
+                if self.__hoy.day==1: self.analizarDb(i[0],i[1],i[2],True)
+                elif self.__hoy.day<10: self.analizarDb(i[0],i[1],i[2],False)
+                elif self.__hoy.day==10: self.analizarDb(i[0],i[1],i[2],True)
+                elif self.__hoy.day>10: self.analizarDb(i[0],i[1],i[2],True)
                 else: print('Error inesperado')
-            #else: print(f'{i[1]}->Reporte existente')
+            else: print(f'{i[1]}->Reporte existente')
         return f'Rutina Terminada: {self.__hoy}'
 
 if __name__=='__main__':
