@@ -1,17 +1,17 @@
 192.168.0.4\sqlexpress,Illy Santafe,3860
 192.168.1.200\sqlexpress,Df Aeropuerto,3840
-192.168.1.110\sqlexpress,Df Unicentro,3830
-172.19.45.42\sqlexpress,Amarti Unicentro,1892
-190.145.201.22\sqlexpress,Michelle Colina,1398,
-172.19.25.73\sqlexpress,716,1820,
-172.19.101.139\sqlexpress,Dapo 82,1305,dapo
-172.19.51.13\sqlexpress,Dapo Colina,1395,dapo
-172.19.25.140\sqlexpress,Dapo Usaquen,1885,dapo
-172.19.25.121\sqlexpress,La Mar,1855,
-172.19.101.101\sqlexpress,Pravda,1345,
+192.168.1.110\sqlexpress,Df Unicentro,3830+
+172.19.45.42\sqlexpress,Amarti Unicentro,1892,+
+190.145.201.22\sqlexpress,Michelle Colina,1398,+
+172.19.25.73\sqlexpress,716,1820,+
+172.19.101.139\sqlexpress,Dapo 82,1305,dapo+
+172.19.51.13\sqlexpress,Dapo Colina,1395,dapo+
+172.19.25.140\sqlexpress,Dapo Usaquen,1885,dapo+
+172.19.25.121\sqlexpress,La Mar,1855,+
+172.19.101.101\sqlexpress,Pravda,1345,+
 172.19.111.17\sqlexpress,Watakushi 82,1331,
 172.19.61.17\sqlexpress,Diner Unicentro,1318,
-172.19.76.19\sqlexpress,Michelle Unicentro,1335,
+172.19.76.19\sqlexpress,Michelle Unicentro,1335,+
 172.19.15.35\sqlexpress,Dapo 65,1380,
 190.147.30.64\sqlexpress,Watakushi 93,1385,
 181.57.147.142\sqlexpress,Diner Santafe,1332,

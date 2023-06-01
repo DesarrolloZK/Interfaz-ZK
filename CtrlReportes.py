@@ -1,6 +1,6 @@
-from CtrlConexion import CtrlConexion as ctcon
+from Persistencia import *
 from calendar import monthrange as mr
-from Archivos import Archivos as arc
+from Persistencia import Archivos as arc
 from datetime import datetime as dt
 from datetime import timedelta
 import copy

@@ -1,0 +1,142 @@
+{
+    "1":{
+        "descripcion":"Dev venta comestibles",
+        "concepto":"0024",
+        "jerarquia":"000270000000000",
+        "conceptodb":[1,6,8],
+        "calcular":0,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "2":{
+        "descripcion":"Dev venta comestibles",
+        "concepto":"0024",
+        "jerarquia":"000030000000000",
+        "conceptodb":[3],
+        "calcular":0,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "3":{
+        "descripcion":"Dev venta licores",
+        "concepto":"0025",
+        "jerarquia":"000170000000000",
+        "conceptodb":[2],
+        "calcular":0,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "4":{
+        "descripcion":"Dev venta comestibles daportare",
+        "concepto":"0036",
+        "jerarquia":"000000000000000",
+        "conceptodb":[1,3,6,8],
+        "calcular":0,
+        "aparte":false,
+        "daportare":true,
+        "codigo":0
+    },
+    "5":{
+        "descripcion":"Dev venta licores daportare",
+        "concepto":"0037",
+        "jerarquia":"000000000000000",
+        "conceptodb":[2],
+        "calcular":0,
+        "aparte":false,
+        "daportare":true,
+        "codigo":0
+    },
+    "6":{
+        "descripcion":"Dev total impuesto al consumo",
+        "concepto":"0026",
+        "jerarquia":"",
+        "conceptodb":["ico"],
+        "calcular":8,
+        "aparte":true,
+        "daportare":false,
+        "codigo":0
+    },
+    "7":{
+        "descripcion":"Dev propinas",
+        "concepto":"0027",
+        "jerarquia":"",
+        "conceptodb":["prop"],
+        "calcular":0,
+        "aparte":true,
+        "daportare":false,
+        "codigo":0
+    },
+    "8":{
+        "descripcion":"Dev domicilios",
+        "concepto":"0028",
+        "jerarquia":"",
+        "conceptodb":["prop"],
+        "calcular":0,
+        "aparte":true,
+        "daportare":false,
+        "codigo":0
+    },
+    "9":{
+        "descripcion":"Dev bonos",
+        "concepto":"0029",
+        "jerarquia":"000180000000000",
+        "conceptodb":[12],
+        "calcular":0,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "10":{
+        "descripcion":"Descuentos",
+        "concepto":"0030",
+        "jerarquia":"000180000000000",
+        "conceptodb":["disc"],
+        "calcular":0,
+        "aparte":true,
+        "daportare":false,
+        "codigo":201611
+    },
+    "11":{
+        "descripcion":"Dev venta grabada",
+        "concepto":"0031",
+        "jerarquia":"000180000000000",
+        "conceptodb":[11],
+        "calcular":5,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "12":{
+        "descripcion":"Dev venta grabada",
+        "concepto":"0032",
+        "jerarquia":"000180000000000",
+        "conceptodb":[10,15],
+        "calcular":19,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "13":{
+        "descripcion":"Dev venta excenta y no grabada",
+        "concepto":"0034",
+        "jerarquia":"000180000000000",
+        "conceptodb":[13],
+        "calcular":-1,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    },
+    "14":{
+        "descripcion":"Dev otros ingresos",
+        "concepto":"0035",
+        "jerarquia":"000180000000000",
+        "conceptodb":[14],
+        "calcular":19,
+        "aparte":false,
+        "daportare":false,
+        "codigo":0
+    }
+}
