@@ -8,7 +8,7 @@ Este programa se encarga de realizar de forma automatica la elaboracion de la in
 
 - configuracion.json:
 
-    ##Indispensables (Si falta algun dato de estos el programa no funcionara)
+    Indispensables-> (Si falta algun dato de estos el programa no funcionara).
 
     - consulta: Contiene el QUERY necesario para extraer la informacion escencial de las caps de cada punto.
     - impoConsumo: Contiene el valor del impuesto al consumo para que el codigo lo tome como un valor constante y realice los calculos      pertinentes.
@@ -20,8 +20,8 @@ Este programa se encarga de realizar de forma automatica la elaboracion de la in
     - PWD: Contraseña para autenticarse en la base de datos.
     - ENCRYPT: Indica si la conexion es encriptada.
     
-    ##Opcionales (Aqui estara la conexion al FTP para enviar los archivos, si esta informacion falta igualmente se guardaran los archivos en la carpeta raiz del programa dentro de la carpeta "Reportes").
-    
+    Opcionales-> (Aqui estara la conexion al FTP para enviar los archivos, si esta informacion falta igualmente se guardaran los archivos en la carpeta raiz del programa dentro de la carpeta "Reportes")
+
     - ipFtp: Direccion ip del ftp donde se enviaran los archivos.
     - userFtp: Usuario de autenticacion en el servidor que publica el FTP.
     - passwordFtp: Contraseña de autenticacion en el servidor que publica el FTP.
