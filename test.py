@@ -1,8 +1,13 @@
-import os
-from datetime import datetime as dt
+from datetime import datetime
+import unittest
+from Reports import ReportsManager
 
-'''
-fechasreportes=list(map(lambda x: dt.strptime(x.split(".")[0],"%d-%m-%Y"),os.listdir('Consultas/Bruta/716-1820')))
-list(map(lambda x:print(x),fechasreportes))
-'''
-print([]+[])
+class pruebas(unittest.TestCase):
+
+    def test_fechaValida(self):
+        rep=ReportsManager()
+        date=datetime.strptime("04/06/2023 5:20:34","%d/%m/%Y %H:%M:%S")
+        self.assertEqual(rep.fechaValida(date,1),True)
+
+if __name__=="__main__":
+    unittest.main()

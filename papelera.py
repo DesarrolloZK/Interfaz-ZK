@@ -1,17 +1,9 @@
-from Persistencia import *
-from calendar import monthrange as mr
-from Persistencia import Archivos as arc
-from datetime import datetime as dt
-from datetime import timedelta
-import copy
-import time
-import decimal
-
-class CtrlReportes():
-    #Metodo constructor
-    #Aqui traemos la informacion del archivo de configuracion
-    def __init__(self)->None:
-        self.reloj()
+'''
+datos=Archivos.traerConcepJerar()
+conceptodb=8
+daportare=True
+aux=next(filter(lambda x:conceptodb in x['conceptodb'] and x['daportare']==daportare,datos.values()),None)
+print(aux)
 
     def reloj(self):
         self.__hoy=dt.now()
@@ -349,8 +341,4 @@ class CtrlReportes():
                 elif self.__hoy.day>10: self.analizarDb(i[0],i[1],i[2],True)
                 else: print('Error inesperado')
             else: print(f'{i[1]}->Reporte existente')
-        return f'Rutina Terminada: {self.__hoy}'
-
-if __name__=='__main__':
-    prueba=CtrlReportes().verificar_TipoConcepto('1305')
-    print(prueba)
+        return f'Rutina Terminada: {self.__hoy}'''

@@ -1,7 +1,7 @@
 #Libreria os: Contiene condigo relacionado a el sistema operativo donde estemos trabajando
 #Libreria json: Contiene condigo para manejar los archivos JSON
 import os
-import json 
+import json
 from ftplib import FTP
 
 #Esta clase nos permite manejar todos los archivos necesarios para el funcionamiento de la aplicacion
@@ -20,7 +20,7 @@ class Archivos():
     #Lee el archivo de estaciones y devuelve un diccionario con dicha informacion.
     def traerEstaciones()->dict:
         try:
-            with open("Estaciones.json","r") as jf:
+            with open("Conexiones/Estaciones.json","r") as jf:
                 estaciones=json.load(jf)
                 jf.close()
                 return estaciones
@@ -125,7 +125,7 @@ class Archivos():
     #Lee el archivo "configuracion.json" y retorna un diccionario con dicha informacion
     def configuraciones()->dict:
         try:
-            with open('Config.json') as jf:
+            with open('configuracion.json') as jf:
                 configuracion=json.load(jf)
                 jf.close()
                 return configuracion

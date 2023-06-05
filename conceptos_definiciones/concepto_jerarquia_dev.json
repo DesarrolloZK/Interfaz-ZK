@@ -7,7 +7,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "2":{
         "descripcion":"Dev venta comestibles",
@@ -17,7 +17,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "3":{
         "descripcion":"Dev venta licores",
@@ -27,7 +27,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "4":{
         "descripcion":"Dev venta comestibles daportare",
@@ -37,7 +37,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":true,
-        "codigo":0
+        "codigo":null
     },
     "5":{
         "descripcion":"Dev venta licores daportare",
@@ -47,7 +47,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":true,
-        "codigo":0
+        "codigo":null
     },
     "6":{
         "descripcion":"Dev total impuesto al consumo",
@@ -57,7 +57,7 @@
         "calcular":8,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "7":{
         "descripcion":"Dev propinas",
@@ -67,7 +67,7 @@
         "calcular":0,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "8":{
         "descripcion":"Dev domicilios",
@@ -77,7 +77,7 @@
         "calcular":0,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "9":{
         "descripcion":"Dev bonos",
@@ -87,7 +87,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "10":{
         "descripcion":"Descuentos",
@@ -107,7 +107,7 @@
         "calcular":5,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "12":{
         "descripcion":"Dev venta grabada",
@@ -117,7 +117,7 @@
         "calcular":19,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "13":{
         "descripcion":"Dev venta excenta y no grabada",
@@ -127,7 +127,7 @@
         "calcular":-1,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "14":{
         "descripcion":"Dev otros ingresos",
@@ -137,6 +137,6 @@
         "calcular":19,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     }
 }

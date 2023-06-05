@@ -7,7 +7,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "2":{
         "descripcion":"Venta Comestibles",
@@ -17,7 +17,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "3":{
         "descripcion":"Venta Comestibles daportare",
@@ -27,7 +27,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":true,
-        "codigo":0
+        "codigo":null
     },
     "4":{
         "descripcion":"Venta Licores",
@@ -37,7 +37,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "5":{
         "descripcion":"Venta Licores daportare",
@@ -47,7 +47,7 @@
         "calcular":0,
         "aparte":false,
         "daportare":true,
-        "codigo":0
+        "codigo":null
     },
     "6":{
         "descripcion":"Total Impuesto al Consumo",
@@ -57,7 +57,7 @@
         "calcular":8,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "7":{
         "descripcion":"Propinas",
@@ -67,7 +67,7 @@
         "calcular":0,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "8":{
         "descripcion":"Domicilios",
@@ -77,7 +77,7 @@
         "calcular":0,
         "aparte":true,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "9":{
         "descripcion":"Bonos",
@@ -87,7 +87,7 @@
         "calcular":100,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "10":{
         "descripcion":"Venta Grabada",
@@ -97,7 +97,7 @@
         "calcular":5,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "11":{
         "descripcion":"Venta Grabada",
@@ -107,7 +107,7 @@
         "calcular":19,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "12":{
         "descripcion":"Venta exenta y no grabada",
@@ -117,7 +117,7 @@
         "calcular":-1,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     },
     "13":{
         "descripcion":"Otros ingresos",
@@ -127,6 +127,6 @@
         "calcular":19,
         "aparte":false,
         "daportare":false,
-        "codigo":0
+        "codigo":null
     }
 }

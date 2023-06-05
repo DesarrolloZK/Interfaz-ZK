@@ -1,6 +1,7 @@
 #Libreria pyodbc: Contiene todo el codigo necesario para manejar la base de datos
 #Libreria ftplib: Contiene todo el codigo necesario para manejar la conexion al servidor FTP
 import pyodbc
+from copy import deepcopy
 from ftplib import FTP 
 from ftplib import error_perm
 from Persistencia import Archivos
@@ -32,12 +33,14 @@ class ConexionDB():
  
     #Funcion para realizar consultas en la base de datos
     #Esta funcion  es de prueba.
-    def consulta(self,sentencia)->list:
+    def consulta(self,query:str)->list:
         try:
             with self.__conect.cursor() as cursor:
-                consulta=cursor.execute(sentencia+';').fetchall()
-                self.cerrarConexion()
-                return consulta
+                cursor.execute(query+';')
+                aux=cursor.fetchall()
+            consulta=deepcopy(aux)
+            self.__conect.close()
+            return consulta
         except Exception: return []
 
     def cerrarConexion(self):self.__conect.close()
