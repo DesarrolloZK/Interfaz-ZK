@@ -1,4 +1,156 @@
 '''
+----------Estaciones---------
+"1": {
+        "punto": "716",
+        "ip": "172.19.25.73",
+        "daportare": false,
+        "oficina":1820
+    },
+    "2": {
+        "punto": "La Mar",
+        "ip": "172.19.85.121",
+        "daportare": false,
+        "oficina":1855
+    },
+    "3": {
+        "punto": "Pravda",
+        "ip": "172.19.101.101",
+        "daportare": false,
+        "oficina":1354
+    },
+    "4": {
+        "punto": "Watakushi 82",
+        "ip": "172.19.111.17",
+        "daportare": false,
+        "oficina":1331
+    },
+    "5": {
+        "punto": "Diner Unicentro",
+        "ip": "172.19.61.17",
+        "daportare": false,
+        "oficina":1318
+    },
+    "6": {
+        "punto": "Michelle Unicentro",
+        "ip": "172.19.76.19",
+        "daportare": false,
+        "oficina":1335
+    },
+    "7": {
+        "punto": "Amarti Usaquen",
+        "ip": "172.19.31.17",
+        "daportare": false,
+        "oficina":1810
+    },
+    "8": {
+        "punto": "Barra Unicentro",
+        "ip": "172.19.120.148",
+        "daportare": false,
+        "oficina":1891
+    },
+    "9": {
+        "punto": "Barra 109",
+        "ip": "172.19.36.17",
+        "daportare": false,
+        "oficina":1870
+    },
+    "10": {
+        "punto": "Barra 82",
+        "ip": "172.19.101.91",
+        "daportare": false,
+        "oficina":1865
+    },
+    "11": {
+        "punto": "Df 97",
+        "ip": "172.19.95.16",
+        "daportare": false,
+        "oficina":3805
+    },
+    "12": {
+        "punto": "Illy 87",
+        "ip": "172.19.71.21",
+        "daportare": false,
+        "oficina":1325
+    },
+    "13": {
+        "punto": "Illy Unicentro",
+        "ip": "172.19.76.50",
+        "daportare": false,
+        "oficina":1320
+    },
+    "14": {
+        "punto": "Wata Unicentro",
+        "ip": "172.19.76.50",
+        "daportare": false,
+        "oficina":1355
+    },
+    "15": {
+        "punto": "Hamakom Unicentro",
+        "ip": "172.19.121.20",
+        "daportare": false,
+        "oficina":1399
+    },
+    "16": {
+        "punto": "Koi",
+        "ip": "172.19.25.92",
+        "daportare": false,
+        "oficina":1329
+    },
+    "17": {
+        "punto": "Luna",
+        "ip": "172.19.101.121",
+        "daportare": false,
+        "oficina":1330
+    },
+    "18": {
+        "punto": "Michelle 82",
+        "ip": "172.19.101.140",
+        "daportare": false,
+        "oficina":1890
+    },
+    "19": {
+        "punto": "Pomeriggio",
+        "ip": "172.19.66.17",
+        "daportare": false,
+        "oficina":1805
+    },
+    "20": {
+        "punto": "Dapo 82",
+        "ip": "172.19.101.139",
+        "daportare": true,
+        "oficina":1305
+    },
+    "21": {
+        "punto": "Dapo Colina",
+        "ip": "172.19.51.14",
+        "daportare": true,
+        "oficina":1395
+    },
+    "22": {
+        "punto": "Dapo Usaquen",
+        "ip": "172.19.25.140",
+        "daportare": true,
+        "oficina":1885
+    },
+    "23": {
+        "punto": "Michelle Colina",
+        "ip": "190.145.201.22",
+        "daportare": false,
+        "oficina":1398
+    },
+    "24": {
+        "punto": "Watakushi 93",
+        "ip": "190.147.30.64",
+        "daportare": false,
+        "oficina":1385
+    },
+    "25": {
+        "punto": "Diner Santafe",
+        "ip": "181.57.147.142",
+        "daportare": false,
+        "oficina":1332
+    }
+---------Estaciones----------
 datos=Archivos.traerConcepJerar()
 conceptodb=8
 daportare=True

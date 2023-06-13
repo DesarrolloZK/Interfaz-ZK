@@ -8,18 +8,14 @@ from Persistencia import Archivos
 
 #Clase para establecer la conexion con la base de datos
 class ConexionDB():
-    #Metodo constructor
-    def __init__(self) -> None:
-        self.cagarConf()
-        
-    def cagarConf(self)->None:
-        self.__configuraciones=Archivos.configuraciones()
+            
+    def cagarConf(self,configuraciones:Archivos)->None:
+        self.__configuraciones=configuraciones
         
     #Funcion en cargada de realizar la conexion y retornar true si se establece la conexion
     #y retornar flase si no se establece dicha conexion
     def conectar(self,ipcaps)->bool:
         try:
-            self.cagarConf()
             if self.__configuraciones:
                 self.__conect=pyodbc.connect(f'DRIVER={self.__configuraciones["DriverDB"]};'+
                                              f'SERVER={ipcaps}{self.__configuraciones["ServerDB"]};'+

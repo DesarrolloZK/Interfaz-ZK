@@ -10,5 +10,7 @@
     "ipFtp":"181.48.67.100",
     "userFtp":"Administrador",
     "passwordFtp":"!MiCros2022%",
-    "carpetaFtp":"VTAS"
+    "carpetaFtp":"VTAS",
+    "canal":"10",
+    "sector":"00"
 }
