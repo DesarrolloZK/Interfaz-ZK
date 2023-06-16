@@ -1,6 +1,3 @@
 from datetime import datetime
 
-ini=[1,2]
-sig=[2,3]
-
-print(ini+sig)
+print(True + True + True)

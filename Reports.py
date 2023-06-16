@@ -42,26 +42,35 @@ class ReportsManager():
     def analisis_DB(self,estacion:dict)->None:
         if self.__db.conectar(estacion['ip']):
             data=self.__db.consulta(self.__config['consulta'])
-            self.orden_Vtas(data,estacion,1)
+            self.organizar_Vtas(data,estacion,1)
         else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
 
-    #Realizamos todas las operaciones para constuir el archivos y dejarlo con su orden final
-    def orden_Vtas(self,data:list,estacion:dict,dias:int)->None:
+    #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
+    def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
         print(f'------------------>{estacion["punto"]}<--------------------------')
         self.__descuentos,vtas=[],[]
         vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],dias),data))
-        vtas=list(filter(self.datovalido_descuentos,deepcopy(vtas)))
-        vtas=list(map(self.fix_None,deepcopy(vtas)))
-        print(len(vtas))
-        propinas=self.calcular_Propinas(deepcopy(vtas),estacion)
-        vtas=self.aplicar_Descuentos(deepcopy(vtas))
-        print(len(vtas))
-        '''vtas=self.suma_Productos(deepcopy(vtas))
-        for x in vtas:
-            print(x[3])'''
-        
-        
+        vtas=list(filter(self.datovalido_descuentos,vtas))
+        vtas=list(map(self.fix_None,vtas))
+        propinas=self.calcular_Propinas(vtas,estacion)
+        self.aplicar_Descuentos(vtas)
+        vtas=self.suma_Productos(vtas)
+        if estacion['oficina2']!=None:
+            ofi1,ofi2=[],[]
+            self.separar_oficinas(vtas,estacion['defAparte'],ofi1,ofi2)
+            ofi1=self.orden_txt(estacion['oficina'],ofi1)
+            ofi2=self.orden_txt(estacion['oficina2'],ofi2)
+            self.set_concep_mst_impo(ofi1,estacion,propinas)
+            self.set_concep_mst_impo(ofi2,estacion,[])
+            del vtas
+        else:
+            vtas=self.orden_txt(estacion['oficina'],vtas)
+            self.set_concep_mst_impo(vtas,estacion,propinas)
 
+    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos y jerarquias
+    def set_concep_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
+        vtas=self.add_ConJer(datos,estacion['daportare'])
+        for x in vtas:print(x)
     #Filtramos la informacion que necesitamos segun la fecha
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
         if checkclose!=None:
@@ -69,7 +78,9 @@ class ReportsManager():
             ini_intervalo=auxfecha.replace(hour=3,minute=0,second=0, microsecond=0)
             ini_intervalo-=timedelta(days=dias)
             fin_intervalo=auxfecha.replace(hour=3,minute=0,second=0,microsecond=0)
-            if dias==1:return ini_intervalo<=checkpost<fin_intervalo
+            if dias==1:
+                f=ini_intervalo<=checkpost<fin_intervalo
+                return f
             elif 1<dias<5:
                 fin_intervalo=fin_intervalo-timedelta(days=(dias-1))
                 return ini_intervalo<=checkpost<fin_intervalo
@@ -118,40 +129,86 @@ class ReportsManager():
         return []
 
     #Aplicamos los descuentos por chk
-    def aplicar_Descuentos(self,datos:list,valores=[],suma=0)->list:
-        aplicado=[]
-        def sumando_chk(dato:list,desc:list,suma:list):
-            nonlocal aplicado
-            if dato not in aplicado:
-                if dato[0]==desc[0] and dato[2]!=9:
-                    dato[6]=dato[6]-(dato[6]*abs(desc[6]/suma))
-                aplicado.append(dato)
+    def aplicar_Descuentos(self,datos:list)->None:
 
-        def separar_chks(descuento:list)->list:
-            nonlocal aplicado
-            values=list(filter(None,map(lambda x: x[6] if descuento[0]==x[0] and x[2]!=0 else None,datos)))
+        def aplicar(desc:list,dat:list,suma)->None:
+            if desc[0]==dat[0]:dat[6]=dat[6]-(dat[6]*abs(desc[6]/suma))
+
+        def verificar_chks(descuento:list)->list:
+            suma=0
+            values=list(map(lambda x: x[6] if descuento[0]==x[0] and x[2]!=0 else 0,datos))
             suma=sum(values)
-            pass
-        return datos
+            if suma!=0: list(map(lambda x:aplicar(descuento,x,suma),datos))
+
+        if self.__descuentos:list(map(verificar_chks,self.__descuentos))
 
     #Sumamos por producto (PPD)
     def suma_Productos(self,datos:list)->list:
-        salida,ppds,values=[],[],
-        def sumando_ppds():
-            nonlocal salida
-            pass
+        ppds,values=[],[],
+        def sumando_ppds(value:list,dato:list)->None:
+            if value[3]==dato[3]:
+                value[5]+=dato[5]
+                value[6]+=dato[6]
 
         def agrupar_ppds(dato:list)->None:
             nonlocal ppds,values
             if not ppds or dato[3] not in ppds:
                 ppds.append(dato[3])
                 values.append(dato)
-
+            else:
+                list(map(lambda x:sumando_ppds(x,dato),values))
         list(map(agrupar_ppds,datos))
-        return list(map(sumando_ppds,values))
-        
+        return values
 
+    #Verificamos si el punto consta de una segunda oficina de venta y separamos dichos datos en otra lista.
+    def separar_oficinas(self,datos:list,definicion:int,ofi1:list,ofi2:list)->None:
+        def separar(dat:list)->None:
+            if dat[2]==definicion:ofi2.append(dat)
+            else:ofi1.append(dat)
+        list(map(separar,datos))
 
+    #Preparamos el orden que llevara cada fila de datos en el txt.
+    def orden_txt(self,oficina:int,datos:list)->list:
+        ordenado=[]
+        def recorrer(dat)->None:
+            aux=['Concepto','10','00','MST',dat[2],oficina,dat[4],dat[3],dat[5],dat[6]]
+            ordenado.append(aux)
+        list(map(recorrer,datos))
+        return ordenado
+
+    #Agregamos a los datos los conceptos y jerarquias, tambien verificamos si el concepto necesita ir en una sola linea del txt.
+    def add_ConJer(self,datos:list,daportare:bool)->list:
+        salida,aparte=[],[]
+        def apartar(conjer:dict,dat:list,apar:list,flag=True)->None:
+            if dat[0]==apar[0]:
+                apar[8]+=apar[8]
+                apar[9]+=apar[9]
+                flag=False
+                return None
+            if flag:aparte.append([conjer['concepto'],dat[1],dat[2],dat[3],conjer['jerarquia'],dat[5],'','',dat[8],dat[9]])
+
+        def add(dat:list)->None:
+            conjer={}
+            if dat[8]>0 and dat[9]>=0:conjer=self.buscar_conceptoJer(dat[4],daportare,False)
+            elif dat[8]<0 and dat[9]<=0:conjer=self.buscar_conceptoJer(dat[4],daportare,True)
+            if conjer:
+                if not conjer['aparte']:
+                    dat[0]=conjer['concepto']
+                    dat[4]=conjer['jerarquia']
+                    salida.append(dat)
+                else:
+                    if aparte:list(map(lambda x: apartar(conjer,dat,x),aparte))
+                    else:aparte.append([conjer['concepto'],dat[1],dat[2],dat[3],conjer['jerarquia'],dat[5],'','',dat[8],dat[9]])
+        list(map(add,datos))
+        del datos
+        return salida+aparte
+
+    #
+    def calcular_Quitar_Ico()->None:
+        pass
+
+    def definicion_valida():
+        pass
 if __name__=='__main__':
     prueba=ReportsManager()
     prueba.iniRutina(3600)
