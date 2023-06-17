@@ -14,6 +14,9 @@ class ReportsManager():
     def __init__(self)->None:
         self.cargar_Config()
 
+    def test(self)->None:
+        self.cargar_Config()
+
     def iniRutina(self,tiempo:int)->None:
         while True:
             if self.cargar_Config():
@@ -69,8 +72,10 @@ class ReportsManager():
 
     #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos y jerarquias
     def set_concep_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
+        self.__impoTotal=0
         vtas=self.add_ConJer(datos,estacion['daportare'])
         for x in vtas:print(x)
+        #self.calcular_Quitar_Ico(vtas)
     #Filtramos la informacion que necesitamos segun la fecha
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
         if checkclose!=None:
@@ -102,7 +107,7 @@ class ReportsManager():
         if datos[6]==None:datos[6]=0
         return datos
     
-    #Busca los conceptos y jerarquias y pregunta si es una devolucion o no
+    #Busca los conceptos y jerarquias, segun la DB y verificamos si es una devolucion
     def buscar_conceptoJer(self,concepto,daportare:bool,devolucion:bool)->dict:
         if not devolucion:
             r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
@@ -110,6 +115,15 @@ class ReportsManager():
         else:
             r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
             return r
+
+    #Busca por concepto (ejemplo: "0010") el valor que se le asocia para calcular los impuestos
+    def valor_conceptoJer(self,concepto:str,jerarquia:str,val=None)->int or None:
+        if self.__concepJer and self.__concepJerDev:
+            val=next(filter(lambda x: x['concepto']==concepto and x['jerarquia']==jerarquia,self.__concepJer.values()),None)
+            if val==None:
+                val=next(filter(lambda x: x['concepto']==concepto and x['jerarquia']==jerarquia,self.__concepJerDev.values()),None)
+        if val!=None:return val['calcular']
+        return val
 
     #Se caculan las propinas, por chk y se le agrega  concepto y jerarquia.
     def calcular_Propinas(self,datos:list,estacion:dict)->list:
@@ -203,12 +217,15 @@ class ReportsManager():
         del datos
         return salida+aparte
 
-    #
-    def calcular_Quitar_Ico()->None:
+    #Calculamos los impuestos y los quitamos de los productos para dejarlos en una linea aparte.
+    def calcular_Quitar_Ico(datos:list)->None:
+        salida
         pass
 
     def definicion_valida():
         pass
+
 if __name__=='__main__':
     prueba=ReportsManager()
-    prueba.iniRutina(3600)
+    #prueba.iniRutina(3600)
+    print(prueba.valor_conceptoJer('0026',''))

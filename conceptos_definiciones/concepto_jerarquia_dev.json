@@ -73,7 +73,7 @@
         "descripcion":"Dev domicilios",
         "concepto":"0028",
         "jerarquia":"",
-        "conceptodb":["prop"],
+        "conceptodb":[9],
         "calcular":0,
         "aparte":true,
         "daportare":false,
