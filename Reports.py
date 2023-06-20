@@ -1,6 +1,6 @@
 from copy import deepcopy
 import time
-import decimal
+from decimal import Decimal
 from DBFTPManager import *
 from Persistencia import *
 from Persistencia import *
@@ -70,12 +70,14 @@ class ReportsManager():
             vtas=self.orden_txt(estacion['oficina'],vtas)
             self.set_concep_mst_impo(vtas,estacion,propinas)
 
-    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos y jerarquias
+    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST)
     def set_concep_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
         self.__impoTotal=0
         vtas=self.add_ConJer(datos,estacion['daportare'])
+        list(map(lambda x:self.calcular_Quitar_Ico(x,self.__config['impoConsumo']),vtas))
         for x in vtas:print(x)
-        #self.calcular_Quitar_Ico(vtas)
+        print(self.__impoTotal)
+
     #Filtramos la informacion que necesitamos segun la fecha
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
         if checkclose!=None:
@@ -107,23 +109,19 @@ class ReportsManager():
         if datos[6]==None:datos[6]=0
         return datos
     
-    #Busca los conceptos y jerarquias, segun la DB y verificamos si es una devolucion
+    #Busca los conceptos y jerarquias, segun el codigo que viene de la DB y verificamos si es una devolucion (si la cantidad o el precio es negativo)
     def buscar_conceptoJer(self,concepto,daportare:bool,devolucion:bool)->dict:
-        if not devolucion:
-            r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
-            return r
-        else:
-            r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
-            return r
+        if not devolucion:r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
+        else:r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
+        return r
 
     #Busca por concepto (ejemplo: "0010") el valor que se le asocia para calcular los impuestos
-    def valor_conceptoJer(self,concepto:str,jerarquia:str,val=None)->int or None:
+    def valor_conceptoJer(self,concepto:str,jerarquia:str)->float or None:
         if self.__concepJer and self.__concepJerDev:
             val=next(filter(lambda x: x['concepto']==concepto and x['jerarquia']==jerarquia,self.__concepJer.values()),None)
-            if val==None:
-                val=next(filter(lambda x: x['concepto']==concepto and x['jerarquia']==jerarquia,self.__concepJerDev.values()),None)
-        if val!=None:return val['calcular']
-        return val
+            if val==None:val=next(filter(lambda x: x['concepto']==concepto and x['jerarquia']==jerarquia,self.__concepJerDev.values()),None)
+            if val!=None:return val['impuesto']
+        return None
 
     #Se caculan las propinas, por chk y se le agrega  concepto y jerarquia.
     def calcular_Propinas(self,datos:list,estacion:dict)->list:
@@ -218,14 +216,15 @@ class ReportsManager():
         return salida+aparte
 
     #Calculamos los impuestos y los quitamos de los productos para dejarlos en una linea aparte.
-    def calcular_Quitar_Ico(datos:list)->None:
-        salida
-        pass
+    def calcular_Quitar_Ico(self,dat:list,impoConsumo:float)->None:
+        valor=self.valor_conceptoJer(dat[0],dat[4])
+        if valor!=None:
+            dat[9]=round(dat[9]/Decimal(1+valor))
+            if impoConsumo==valor:self.__impoTotal+=dat[9]*Decimal(valor)
 
     def definicion_valida():
         pass
 
 if __name__=='__main__':
     prueba=ReportsManager()
-    #prueba.iniRutina(3600)
-    print(prueba.valor_conceptoJer('0026',''))
+    prueba.iniRutina(3600)

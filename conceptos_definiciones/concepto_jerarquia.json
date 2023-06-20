@@ -4,7 +4,7 @@
         "concepto":"0001",
         "jerarquia":"000270000000000",
         "conceptodb":[1,6,8],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -14,7 +14,7 @@
         "concepto":"0001",
         "jerarquia":"000030000000000",
         "conceptodb":[3],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -24,7 +24,7 @@
         "concepto":"0004",
         "jerarquia":"000270000000000",
         "conceptodb":[1,6,8,3],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":true,
         "codigo":null
@@ -34,7 +34,7 @@
         "concepto":"0002",
         "jerarquia":"000170000000000",
         "conceptodb":[2],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -44,7 +44,7 @@
         "concepto":"0019",
         "jerarquia":"000170000000000",
         "conceptodb":[2],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":true,
         "codigo":null
@@ -54,7 +54,7 @@
         "concepto":"0005",
         "jerarquia":"",
         "conceptodb":["ico"],
-        "calcular":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -64,7 +64,7 @@
         "concepto":"0007",
         "jerarquia":"",
         "conceptodb":["prop"],
-        "calcular":0,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -74,7 +74,7 @@
         "concepto":"0010",
         "jerarquia":"000180000000000",
         "conceptodb":[9],
-        "calcular":0,
+        "impuesto":0.08,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -84,7 +84,7 @@
         "concepto":"0012",
         "jerarquia":"000180000000000",
         "conceptodb":[12],
-        "calcular":1,
+        "impuesto":0.08,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -94,7 +94,7 @@
         "concepto":"0016",
         "jerarquia":"000180000000000",
         "conceptodb":[11],
-        "calcular":0.05,
+        "impuesto":0.05,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -104,7 +104,7 @@
         "concepto":"0017",
         "jerarquia":"000180000000000",
         "conceptodb":[10,15],
-        "calcular":0.19,
+        "impuesto":0.19,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -114,7 +114,7 @@
         "concepto":"0020",
         "jerarquia":"000180000000000",
         "conceptodb":[4,13],
-        "calcular":-1,
+        "impuesto":null,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -124,7 +124,7 @@
         "concepto":"0023",
         "jerarquia":"000180000000000",
         "conceptodb":[14],
-        "calcular":0.19,
+        "impuesto":0.19,
         "aparte":false,
         "daportare":false,
         "codigo":null
