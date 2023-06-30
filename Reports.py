@@ -51,34 +51,39 @@ class ReportsManager():
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
         print(f'------------------>{estacion["punto"]}<--------------------------')
-        self.__descuentos,vtas=[],[]
+        self.__descuentos,self.__formasPago,self.__propinas,vtas=[],[],[],[]
         vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],dias),data))
         vtas=list(filter(self.datovalido_descuentos,vtas))
-        vtas=list(map(self.fix_None,vtas))
-        propinas=self.calcular_Propinas(vtas,estacion)
+        vtas=list(map(self.fix_None_Convertir,vtas))
+        self.__propinas=self.calcular_Propinas(vtas,estacion)
         self.aplicar_Descuentos(vtas)
-        vtas=self.suma_Productos(vtas)
+        self.marcar_NotaCredito(vtas)
         if estacion['oficina2']!=None:
             ofi1,ofi2=[],[]
+            print('sushis')
             self.separar_oficinas(vtas,estacion['defAparte'],ofi1,ofi2)
-            ofi1=self.orden_txt(estacion['oficina'],ofi1)
-            ofi2=self.orden_txt(estacion['oficina2'],ofi2)
-            self.set_concep_mst_impo(ofi1,estacion,propinas)
-            self.set_concep_mst_impo(ofi2,estacion,[])
+            ofi1=self.add_ConJer(ofi1,estacion['oficina'],estacion['daportare'])
+            ofi1=self.suma_Productos(ofi1)
+            ofi2=self.add_ConJer(ofi2,estacion['oficina2'],estacion['daportare'])
+            ofi2=self.suma_Productos(ofi2)
+            self.set_mst_impo(ofi1,estacion)
+            self.set_mst_impo(ofi2,estacion)
             del vtas
         else:
-            vtas=self.orden_txt(estacion['oficina'],vtas)
-            self.set_concep_mst_impo(vtas,estacion,propinas)
+            vtas=self.add_ConJer(vtas,estacion['oficina'],estacion['daportare'])
+            vtas=self.suma_Productos(vtas)
+            self.set_mst_impo(vtas,estacion)
 
     #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST)
-    def set_concep_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
+    def set_mst_impo(self,datos:list,estacion:dict)->None:
         self.__impoTotal=0
-        vtas=self.add_ConJer(datos,estacion['daportare'])
-        list(map(lambda x:self.calcular_Quitar_Ico(x,self.__config['impoConsumo']),vtas))
-        for x in vtas:print(x)
+        list(map(lambda x:self.calcular_Quitar_Ico(x,self.__config['impoConsumo']),datos))
+        list(map(self.adicionarDefMST,datos))
+        for x in datos:print(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}')
+        print(self.__propinas)
         print(self.__impoTotal)
 
-    #Filtramos la informacion que necesitamos segun la fecha
+    #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
         if checkclose!=None:
             auxfecha=deepcopy(self.__hoy)
@@ -96,23 +101,34 @@ class ReportsManager():
 
     #Filtramos los datos que necesitamos (verifica si el campo 5 es mayor a 0 y diferete de Nulo, verifica si los campos 10 y 11 son distintos de None), el campo 7 indica si es un dato normal o es un descuento (2: descuento, 1: dato normal), y aqui mismo separamos los descuentos del resto de datos
     def datovalido_descuentos(self,datos:list)->bool:
-        flag=datos[5]!=0 and datos[5]!=None and datos[10]!=None
-        if datos[7]==2 and flag:
-            self.__descuentos.append(datos)
-            return False
-        elif datos[7]==1 and datos[3]>99999 and flag:
-            return True
+        flag=datos[2]!=7 and datos[5]!=0 and datos[5]!=None and datos[10]!=None
+        if datos[7]==1 and datos[3]>99999 and flag:return True
+        elif datos[7]==2 and flag:self.__descuentos.append(datos)
+        elif datos[7]==4:self.__formasPago.append(datos)
         return False
 
-    #Si el dato del capo 6 es None se reemplazara su valor con 0
-    def fix_None(self,datos:list)->list:
-        if datos[6]==None:datos[6]=0
-        return datos
+    #Si el dato del campo 6 es None se reemplazara su valor con 0 y transformamos cada fila proveniente de la base de datos a una lista
+    def fix_None_Convertir(self,dat:list)->list:
+        if dat[6]==None:dat[6]=0
+        aux=list(dat)
+        aux.append(False)
+        return aux
     
+    #Se verifica gracias al detailtype 4, si un cheque es una factura normal o una nota credito y en base a eso marcamos cada producto con True o False para posteriormente asignarle un concepto normal o de devolucion
+    def marcar_NotaCredito(self,datos:list)->None:
+        def marcar(forma:list,dat:list)-> None:
+            if forma[0]==dat[0] and forma[6]<0:dat[12]=True
+        aux=lambda x:list(map(lambda y:marcar(x,y),datos))
+        list(map(aux,self.__formasPago))
+
     #Busca los conceptos y jerarquias, segun el codigo que viene de la DB y verificamos si es una devolucion (si la cantidad o el precio es negativo)
     def buscar_conceptoJer(self,concepto,daportare:bool,devolucion:bool)->dict:
-        if not devolucion:r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
-        else:r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
+        if not devolucion:
+            r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
+            if not r:next(filter(lambda x: None in x['conceptodb'] and daportare==x['daportare'],self.__concepJer.values()),{})
+        elif devolucion:
+            r=next(filter(lambda x: concepto in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
+            if not r:next(filter(lambda x: None in x['conceptodb'] and daportare==x['daportare'],self.__concepJerDev.values()),{})
         return r
 
     #Busca por concepto (ejemplo: "0010") el valor que se le asocia para calcular los impuestos
@@ -142,9 +158,8 @@ class ReportsManager():
 
     #Aplicamos los descuentos por chk
     def aplicar_Descuentos(self,datos:list)->None:
-
         def aplicar(desc:list,dat:list,suma)->None:
-            if desc[0]==dat[0]:dat[6]=dat[6]-(dat[6]*abs(desc[6]/suma))
+            if desc[0]==dat[0] and dat[2]!=9:dat[6]=dat[6]-(dat[6]*abs(desc[6]/suma))
 
         def verificar_chks(descuento:list)->list:
             suma=0
@@ -154,21 +169,50 @@ class ReportsManager():
 
         if self.__descuentos:list(map(verificar_chks,self.__descuentos))
 
-    #Sumamos por producto (PPD)
-    def suma_Productos(self,datos:list)->list:
-        ppds,values=[],[],
-        def sumando_ppds(value:list,dato:list)->None:
-            if value[3]==dato[3]:
-                value[5]+=dato[5]
-                value[6]+=dato[6]
-
-        def agrupar_ppds(dato:list)->None:
-            nonlocal ppds,values
-            if not ppds or dato[3] not in ppds:
-                ppds.append(dato[3])
-                values.append(dato)
+     #Agregamos a los datos los conceptos y jerarquias, tambien verificamos si el concepto necesita ir en una sola linea del txt.
+    
+    #Se buscan los conceptos y jerarquias asociado a cada dato y se de vuelven los datos en el orden requerido para SAP (concepto, sector,canal, MST, jerarquia, voficina de venta, oficina que produce, PPD, cantidad, valor)
+    def add_ConJer(self,datos:list,oficina:str,daportare:bool)->list:
+        aux,salida,aparte,flag=deepcopy(datos),[],[],False
+        def unaLinea(apar:list,conjer:dict,dat:list)->None:
+            nonlocal flag
+            if apar[0]==conjer['concepto'] and apar[4]==conjer['jerarquia']:
+                apar[9]+=dat[6]
+                flag+=True
+        def recorrer(dat:list)->None:
+            nonlocal flag,aparte
+            conjer=self.buscar_conceptoJer(dat[2],daportare,dat[12])
+            if conjer:
+                if conjer['aparte']:
+                    if not aparte:
+                        aparte.append([conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],oficina,'','','',dat[6]])
+                    else:
+                        list(map(lambda x: unaLinea(x,conjer,dat),aparte))
+                        if not bool(flag):aparte.append([conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],oficina,'','','',dat[6]])
+                else:
+                    salida.append([conjer['concepto'],self.__config['canal'],self.__config['sector'],'MST',conjer['jerarquia'],oficina,dat[4],dat[3],dat[5],dat[6]])
             else:
-                list(map(lambda x:sumando_ppds(x,dato),values))
+                salida.append([dat[0],self.__config['canal'],self.__config['sector'],'MST',f'Sin concepto: {dat[2]}',oficina,dat[4],dat[3],dat[5],dat[6]])
+        list(map(recorrer,aux))
+        return salida+aparte
+
+    #Sumamos cantidades y valores segun el concepto, jerarquia, oficina que produce y PPD
+    def suma_Productos(self,datos:list)->list:
+        ppds,values=[],[]
+        def sumando_ppds(value:list,dat:list)->None:
+            bandera=value[0]==dat[0] and value[4]==dat[4] and value[6]==dat[6] and value[7]==dat[7]
+            if bandera:
+                value[8]+=dat[8]
+                value[9]+=dat[9]
+
+        def agrupar_ppds(dat:list)->None:
+            nonlocal ppds,values
+            aux=[dat[0],dat[4],dat[6],dat[7]]
+            if not ppds or aux not in ppds:
+                ppds.append(aux)
+                values.append(dat)
+            else:
+                list(map(lambda x:sumando_ppds(x,dat),values))
         list(map(agrupar_ppds,datos))
         return values
 
@@ -179,52 +223,33 @@ class ReportsManager():
             else:ofi1.append(dat)
         list(map(separar,datos))
 
-    #Preparamos el orden que llevara cada fila de datos en el txt.
-    def orden_txt(self,oficina:int,datos:list)->list:
-        ordenado=[]
-        def recorrer(dat)->None:
-            aux=['Concepto','10','00','MST',dat[2],oficina,dat[4],dat[3],dat[5],dat[6]]
-            ordenado.append(aux)
-        list(map(recorrer,datos))
-        return ordenado
-
-    #Agregamos a los datos los conceptos y jerarquias, tambien verificamos si el concepto necesita ir en una sola linea del txt.
-    def add_ConJer(self,datos:list,daportare:bool)->list:
-        salida,aparte=[],[]
-        def apartar(conjer:dict,dat:list,apar:list,flag=True)->None:
-            if dat[0]==apar[0]:
-                apar[8]+=apar[8]
-                apar[9]+=apar[9]
-                flag=False
-                return None
-            if flag:aparte.append([conjer['concepto'],dat[1],dat[2],dat[3],conjer['jerarquia'],dat[5],'','',dat[8],dat[9]])
-
-        def add(dat:list)->None:
-            conjer={}
-            if dat[8]>0 and dat[9]>=0:conjer=self.buscar_conceptoJer(dat[4],daportare,False)
-            elif dat[8]<0 and dat[9]<=0:conjer=self.buscar_conceptoJer(dat[4],daportare,True)
-            if conjer:
-                if not conjer['aparte']:
-                    dat[0]=conjer['concepto']
-                    dat[4]=conjer['jerarquia']
-                    salida.append(dat)
-                else:
-                    if aparte:list(map(lambda x: apartar(conjer,dat,x),aparte))
-                    else:aparte.append([conjer['concepto'],dat[1],dat[2],dat[3],conjer['jerarquia'],dat[5],'','',dat[8],dat[9]])
-        list(map(add,datos))
-        del datos
-        return salida+aparte
-
     #Calculamos los impuestos y los quitamos de los productos para dejarlos en una linea aparte.
     def calcular_Quitar_Ico(self,dat:list,impoConsumo:float)->None:
         valor=self.valor_conceptoJer(dat[0],dat[4])
         if valor!=None:
             dat[9]=round(dat[9]/Decimal(1+valor))
             if impoConsumo==valor:self.__impoTotal+=dat[9]*Decimal(valor)
+        else:dat[9]=round(dat[9])
+    
+    #En base a ladefiniciones (1,2,3,4,5,18,20.....etc), asignamos las M, S o T y añadimos la oficina de venta que produce el producto
+    def adicionarDefMST(self,dat:list)->None:
+        if dat[5] in self.__defM['traslados'] and dat[5] not in self.__defM['noTraslados']:
+            if dat[6] in self.__defST['porDefecto']['produce']:
+                aux=self.__defST['porDefecto'][str(dat[6])]
+                dat[3]=aux[1]
+                dat[6]=aux[0]
+            elif dat[6] in self.__defST[str(dat[5])]['produce']:
+                aux=self.__defST[str(dat[5])][str(dat[6])]
+                dat[3]=aux[1]
+                dat[6]=aux[0]
+            else:dat[6]=f"No_def ->{dat[6]}<- "
+        elif dat[5] not in self.__defM['traslados'] and dat[5] in self.__defM['noTraslados']:
+            aux=self.__defM['definicion']
+            dat[3]=aux[1]
+            dat[6]=aux[0]
+        else:dat[6]=f"No_def ->{dat[6]}<-"
 
-    def definicion_valida():
-        pass
 
 if __name__=='__main__':
     prueba=ReportsManager()
-    prueba.iniRutina(3600)
+    prueba.iniRutina(tiempo=3600)

@@ -1,4 +1,7 @@
-from datetime import datetime
 
-test=[[1,2,3],'asdasd',87,{"algo":"Nel"},(True,False),None]
-if None in test:print("none")
+bandera=False
+lista=[False,False,False,True,False,False]
+
+for x in lista:bandera+=x
+
+print(type(bandera))
