@@ -5,7 +5,6 @@ from Reports import ReportsManager
 
 class pruebas(unittest.TestCase):
 
-    '''
     def test_fechaValida(self):
         rep=ReportsManager()
         #Probando dia antes
@@ -96,9 +95,7 @@ class pruebas(unittest.TestCase):
         #cambio de año 4 dia antes
         testdate=datetime.strptime('2022-12-28 17:00:00','%Y-%m-%d %H:%M:%S')
         self.assertEqual(rep.fechaValida(testdate,4),True)
-        '''
 
-    '''
     def test_conceptosjerarquias(self):
         rep=ReportsManager()
         #buscando concepto jearquia
@@ -106,7 +103,6 @@ class pruebas(unittest.TestCase):
         print(rep.buscarconceptoJer(6,True,False))
         print(rep.buscarconceptoJer("disc",False,True))
         print(rep.buscarconceptoJer(13,False,True))
-    '''
 
     
         

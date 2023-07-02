@@ -12,14 +12,11 @@ from functools import reduce
 class ReportsManager():
     #Metodo constructor, este codigo se ejecutara apenas se genere una instancia de la clase
     def __init__(self)->None:
-        self.cargar_Config()
-
-    def test(self)->None:
-        self.cargar_Config()
+        self.__señal=self.cargar_Config()
 
     def iniRutina(self,tiempo:int)->None:
         while True:
-            if self.cargar_Config():
+            if self.__señal:
                 list(map(self.analisis_DB,self.__estaciones.values()))
                 time.sleep(tiempo)
             else:
@@ -31,7 +28,7 @@ class ReportsManager():
         self.__vtas=[]
         self.__db=ConexionDB()
         self.__hoy=datetime.now()
-        self.__config=Archivos.configuraciones()
+        self.__config=Archivos.traerConfiguraciones()
         self.__db.cagarConf(self.__config)
         self.__estaciones=Archivos.traerEstaciones()
         self.__concepJer=Archivos.traerConcepJerar()
@@ -51,37 +48,35 @@ class ReportsManager():
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
         print(f'------------------>{estacion["punto"]}<--------------------------')
-        self.__descuentos,self.__formasPago,self.__propinas,vtas=[],[],[],[]
+        self.__descuentos,self.__formasPago,propinas,vtas=[],[],[],[]
         vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],dias),data))
         vtas=list(filter(self.datovalido_descuentos,vtas))
         vtas=list(map(self.fix_None_Convertir,vtas))
-        self.__propinas=self.calcular_Propinas(vtas,estacion)
+        propinas=self.calcular_Propinas(vtas,estacion)
         self.aplicar_Descuentos(vtas)
         self.marcar_NotaCredito(vtas)
         if estacion['oficina2']!=None:
             ofi1,ofi2=[],[]
-            print('sushis')
             self.separar_oficinas(vtas,estacion['defAparte'],ofi1,ofi2)
             ofi1=self.add_ConJer(ofi1,estacion['oficina'],estacion['daportare'])
             ofi1=self.suma_Productos(ofi1)
             ofi2=self.add_ConJer(ofi2,estacion['oficina2'],estacion['daportare'])
             ofi2=self.suma_Productos(ofi2)
-            self.set_mst_impo(ofi1,estacion)
-            self.set_mst_impo(ofi2,estacion)
+            self.set_mst_impo(ofi1,estacion,propinas)
+            self.set_mst_impo(ofi2,estacion,propinas)
             del vtas
         else:
             vtas=self.add_ConJer(vtas,estacion['oficina'],estacion['daportare'])
             vtas=self.suma_Productos(vtas)
-            self.set_mst_impo(vtas,estacion)
+            self.set_mst_impo(vtas,estacion,propinas)
 
     #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST)
-    def set_mst_impo(self,datos:list,estacion:dict)->None:
-        self.__impoTotal=0
-        list(map(lambda x:self.calcular_Quitar_Ico(x,self.__config['impoConsumo']),datos))
+    def set_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
+        impoTotal=self.calcular_Quitar_Ico(datos,estacion,self.__config['impoConsumo'])
         list(map(self.adicionarDefMST,datos))
+        if propinas:datos.append(propinas)
+        datos.append(impoTotal)
         for x in datos:print(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}')
-        print(self.__propinas)
-        print(self.__impoTotal)
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
@@ -168,8 +163,6 @@ class ReportsManager():
             if suma!=0: list(map(lambda x:aplicar(descuento,x,suma),datos))
 
         if self.__descuentos:list(map(verificar_chks,self.__descuentos))
-
-     #Agregamos a los datos los conceptos y jerarquias, tambien verificamos si el concepto necesita ir en una sola linea del txt.
     
     #Se buscan los conceptos y jerarquias asociado a cada dato y se de vuelven los datos en el orden requerido para SAP (concepto, sector,canal, MST, jerarquia, voficina de venta, oficina que produce, PPD, cantidad, valor)
     def add_ConJer(self,datos:list,oficina:str,daportare:bool)->list:
@@ -224,12 +217,19 @@ class ReportsManager():
         list(map(separar,datos))
 
     #Calculamos los impuestos y los quitamos de los productos para dejarlos en una linea aparte.
-    def calcular_Quitar_Ico(self,dat:list,impoConsumo:float)->None:
-        valor=self.valor_conceptoJer(dat[0],dat[4])
-        if valor!=None:
-            dat[9]=round(dat[9]/Decimal(1+valor))
-            if impoConsumo==valor:self.__impoTotal+=dat[9]*Decimal(valor)
-        else:dat[9]=round(dat[9])
+    def calcular_Quitar_Ico(self,datos:list,estacion:dict,impoConsumo:float)->list:
+        aux=0
+        def calcular(dat:list)->None:
+            nonlocal aux
+            valor=self.valor_conceptoJer(dat[0],dat[4])
+            if valor!=None:
+                dat[9]=abs(round(dat[9]/Decimal(1+valor)))
+                if impoConsumo==valor:aux+=dat[9]*Decimal(valor)
+            else:dat[9]=abs(round(dat[9]))
+        list(map(calcular,datos))
+        conjer=self.buscar_conceptoJer('impConsumo',estacion['daportare'],False)
+        impuesto=[conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],estacion['oficina'],'','','',round(aux)]
+        return impuesto
     
     #En base a ladefiniciones (1,2,3,4,5,18,20.....etc), asignamos las M, S o T y añadimos la oficina de venta que produce el producto
     def adicionarDefMST(self,dat:list)->None:

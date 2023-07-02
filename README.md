@@ -1,9 +1,11 @@
 # DOCUMENTACION
 
 ## Descripcion
+
 Este programa se encarga de realizar de forma automatica la elaboracion de la interfaz de los distintos restaurantes de la empresa que se sube a sap para que los administradores tengan un control sobre su inventario.
 
 ## Archivos importantes
+
 Para este programa se estructuraron algunos archivos para que su funcionamiento sea correcto, dentro de dichos archivos se definen caracteristicas necesarias para que el programa tenga la capacidad de realizar su tarea y son los siguientes:
 
 - configuracion.json:

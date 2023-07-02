@@ -102,7 +102,7 @@ class Archivos():
         except Exception:return False
 
     #Escribe los reportes, que son los archivos finales que se enviaran a SAP
-    def reportes(self,datos,punto,ofi,fecha)->bool:
+    def escribirReportes(self,datos,punto,ofi,fecha)->bool:
         try:
             with open(f'Reportes/{punto}-{ofi}/VTAS{ofi}{fecha}.txt','w') as wm:
                 list(map(lambda x:wm.write(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}\n'),datos))
@@ -114,7 +114,7 @@ class Archivos():
         except Exception:return False
     
     #Accede a la carpeta de reportes y envia al FTP el reporte que se le indique
-    def enviar_a_Ftp(self,ftp:FTP,punto:str,ofi:str,fecha:str)->bool:
+    def enviarAFtp(self,ftp:FTP,punto:str,ofi:str,fecha:str)->bool:
         try:
             with open(f'Reportes/{punto}-{ofi}/VTAS{ofi}{fecha}.txt','rb') as reporte:
                 ftp.storlines(f'STOR VTAS{ofi}{fecha}.txt',reporte)
@@ -123,11 +123,12 @@ class Archivos():
         except Exception:return False
 
     #Lee el archivo "configuracion.json" y retorna un diccionario con dicha informacion
-    def configuraciones()->dict:
+    def traerConfiguraciones()->dict:
         try:
             with open('configuracion.json') as jf:
                 configuracion=json.load(jf)
                 jf.close()
                 return configuracion
         except FileNotFoundError:
+            print('aqui')
             return {}
