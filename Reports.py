@@ -25,7 +25,6 @@ class ReportsManager():
 
     #Traemos toda la condifuracion necesaria desde los archivos JSON y definimos las variables que utilizaremos, en este caso vtas como una lista vacia donde dejaremos los datos finales y hoy con la fecha actual
     def cargar_Config(self)->bool:
-        self.__vtas=[]
         self.__db=ConexionDB()
         self.__hoy=datetime.now()
         self.__config=Archivos.traerConfiguraciones()
@@ -73,7 +72,7 @@ class ReportsManager():
     #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST)
     def set_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
         impoTotal=self.calcular_Quitar_Ico(datos,estacion,self.__config['impoConsumo'])
-        list(map(self.adicionarDefMST,datos))
+        list(map(self.adicionar_DefMST,datos))
         if propinas:datos.append(propinas)
         datos.append(impoTotal)
         for x in datos:print(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}')
@@ -232,7 +231,7 @@ class ReportsManager():
         return impuesto
     
     #En base a ladefiniciones (1,2,3,4,5,18,20.....etc), asignamos las M, S o T y añadimos la oficina de venta que produce el producto
-    def adicionarDefMST(self,dat:list)->None:
+    def adicionar_DefMST(self,dat:list)->None:
         if dat[5] in self.__defM['traslados'] and dat[5] not in self.__defM['noTraslados']:
             if dat[6] in self.__defST['porDefecto']['produce']:
                 aux=self.__defST['porDefecto'][str(dat[6])]
