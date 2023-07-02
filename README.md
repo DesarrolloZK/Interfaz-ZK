@@ -8,7 +8,7 @@ Este programa se encarga de realizar de forma automatica la elaboracion de la in
 
 Para este programa se estructuraron algunos archivos para que su funcionamiento sea correcto, dentro de dichos archivos se definen caracteristicas necesarias para que el programa tenga la capacidad de realizar su tarea y son los siguientes:
 
-- configuracion.json:
+## configuracion.json:
 
 ### Indispensables-> (Si falta algun dato de estos el programa no funcionara).
 
