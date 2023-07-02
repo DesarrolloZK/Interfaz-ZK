@@ -8,9 +8,9 @@ Este programa se encarga de realizar de forma automatica la elaboracion de la in
 
 Para este programa se estructuraron algunos archivos para que su funcionamiento sea correcto, dentro de dichos archivos se definen caracteristicas necesarias para que el programa tenga la capacidad de realizar su tarea y son los siguientes:
 
-## configuracion.json:
+## configuracion.json
 
-### Indispensables-> (Si falta algun dato de estos el programa no funcionara).
+### Indispensables-> (Si falta algun dato de estos el programa no funcionara)
 
 - consulta: Contiene el QUERY necesario para extraer la informacion escencial de las caps de cada punto.
 - impoConsumo: Contiene el valor del impuesto al consumo para que el codigo lo tome como un valor constante y realice los calculos      pertinentes.
