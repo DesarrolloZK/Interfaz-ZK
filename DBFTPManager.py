@@ -7,14 +7,16 @@ from ftplib import error_perm
 from Persistencia import Archivos
 
 #Clase para establecer la conexion con la base de datos
-class ConexionDB():
+class ManagerDB():
             
-    def cagarConf(self,configuraciones:Archivos)->None:
-        self.__configuraciones=configuraciones
-        
+    def cagarConf(self,configuraciones:Archivos)->None:self.__configuraciones=configuraciones
+
+    def crear_DBlocal()->bool:
+        pass
+
     #Funcion en cargada de realizar la conexion y retornar true si se establece la conexion
     #y retornar flase si no se establece dicha conexion
-    def conectar(self,ipcaps)->bool:
+    def conectar_Estacion(self,ipcaps)->bool:
         try:
             if self.__configuraciones:
                 self.__conect=pyodbc.connect(f'DRIVER={self.__configuraciones["DriverDB"]};'+

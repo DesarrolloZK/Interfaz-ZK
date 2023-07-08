@@ -1,18 +1,15 @@
-from copy import deepcopy
 import time
+from copy import deepcopy
 from decimal import Decimal
 from DBFTPManager import *
 from Persistencia import *
-from Persistencia import *
 from datetime import datetime
 from datetime import timedelta
-from functools import reduce
 
 
 class ReportsManager():
     #Metodo constructor, este codigo se ejecutara apenas se genere una instancia de la clase
-    def __init__(self)->None:
-        self.__señal=self.cargar_Config()
+    def __init__(self)->None:self.__señal=self.cargar_Config()
 
     def iniRutina(self,tiempo:int)->None:
         while True:
@@ -25,7 +22,7 @@ class ReportsManager():
 
     #Traemos toda la condifuracion necesaria desde los archivos JSON y definimos las variables que utilizaremos, en este caso vtas como una lista vacia donde dejaremos los datos finales y hoy con la fecha actual
     def cargar_Config(self)->bool:
-        self.__db=ConexionDB()
+        self.__db=ManagerDB()
         self.__hoy=datetime.now()
         self.__config=Archivos.traerConfiguraciones()
         self.__db.cagarConf(self.__config)
@@ -39,7 +36,7 @@ class ReportsManager():
 
     #Traemos la consulta desde la DB de la estacion y verificamos si es correcta la conexion
     def analisis_DB(self,estacion:dict)->None:
-        if self.__db.conectar(estacion['ip']):
+        if self.__db.conectar_Estacion(estacion['ip']):
             data=self.__db.consulta(self.__config['consulta'])
             self.organizar_Vtas(data,estacion,1)
         else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
