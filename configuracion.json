@@ -10,7 +10,14 @@
     "ipFtp":"181.48.67.100",
     "userFtp":"Administrador",
     "passwordFtp":"!MiCros2022%",
-    "carpetaFtp":"VTAS",
+    "carpetaVtas":"VTAS",
+    "carpetaNotasCredito":"NC_VTAS",
     "canal":"10",
-    "sector":"00"
+    "sector":"00",
+    "SistemasInstanciaDB":"181.48.67.101\\INTERFAZ",
+    "SistemasUID":"SistemasDB",
+    "SistemasPWD":"!Sistemas100%",
+    "SistemasENCRYPT":"No",
+    "InterfazDB":"zonakvtasdb",
+    "crearTabla":"CREATE TABLE nombre(numcheque int,fechaPosteo datetime not null, tipoProducto int, codProducto int, ofiProduce int, cantidad int, total numeric(21,4), tipoDato int not null, propinaObligatoria numeric(21,4), propinaVoluntaria numeric(21,4), subTotal numeric(21,4), fechaPago datetime);"
 }

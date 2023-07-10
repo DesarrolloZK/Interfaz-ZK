@@ -6,7 +6,6 @@ from Persistencia import *
 from datetime import datetime
 from datetime import timedelta
 
-
 class ReportsManager():
     #Metodo constructor, este codigo se ejecutara apenas se genere una instancia de la clase
     def __init__(self)->None:self.__señal=self.cargar_Config()
@@ -24,6 +23,7 @@ class ReportsManager():
     def cargar_Config(self)->bool:
         self.__db=ManagerDB()
         self.__hoy=datetime.now()
+        self.__auxFecha=(self.__hoy-timedelta(days=1)).strftime('%d%m%Y')
         self.__config=Archivos.traerConfiguraciones()
         self.__db.cagarConf(self.__config)
         self.__estaciones=Archivos.traerEstaciones()
@@ -34,12 +34,21 @@ class ReportsManager():
         if self.__config and self.__concepJer and self.__concepJerDev and self.__defM and self.__defST and self.__estaciones:return True
         return False
 
-    #Traemos la consulta desde la DB de la estacion y verificamos si es correcta la conexion
+    #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, luego traem la consulta desde la DB de la estacion y guarda la consulta de la estacion en la db de sistemas
     def analisis_DB(self,estacion:dict)->None:
-        if self.__db.conectar_Estacion(estacion['ip']):
-            data=self.__db.consulta(self.__config['consulta'])
-            self.organizar_Vtas(data,estacion,1)
-        else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
+        print(f'{estacion["punto"]}___________________________________')
+        if self.__db.conectar_DBInterfaz():
+            if self.__db.comprobar_DBInterfaz():
+                if self.__db.comprobar_TablaInterfaz(estacion['punto']):
+                    if self.__db.conectar_Estacion(estacion['ip']):
+                        data=self.__db.consulta_Estacion(self.__config['consulta'])
+                        if self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy.date()):
+                            self.organizar_Vtas(data,estacion,1)
+                        else:print('No se pudo guardar la consulta en bruto')
+                    else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
+                else:print('No es posible encontrar los datos')
+            else: print("No se pudo conectar con la DB de la interfaz")
+        else: print("No se pudo conectar con la instancia de la interfaz")
 
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
@@ -58,21 +67,24 @@ class ReportsManager():
             ofi1=self.suma_Productos(ofi1)
             ofi2=self.add_ConJer(ofi2,estacion['oficina2'],estacion['daportare'])
             ofi2=self.suma_Productos(ofi2)
-            self.set_mst_impo(ofi1,estacion,propinas)
-            self.set_mst_impo(ofi2,estacion,propinas)
+            self.mst_impo_completar(ofi1,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas)
+            self.mst_impo_completar(ofi2,estacion['daportare'],estacion['oficina2'],estacion['punto'],propinas)
             del vtas
         else:
             vtas=self.add_ConJer(vtas,estacion['oficina'],estacion['daportare'])
             vtas=self.suma_Productos(vtas)
-            self.set_mst_impo(vtas,estacion,propinas)
+            self.mst_impo_completar(vtas,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas)
 
-    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST)
-    def set_mst_impo(self,datos:list,estacion:dict,propinas:list)->None:
-        impoTotal=self.calcular_Quitar_Ico(datos,estacion,self.__config['impoConsumo'])
+    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST); tambien creamos los reportes
+    def mst_impo_completar(self,datos:list,daportare:bool,oficina:int,punto:str,propinas:list)->None:
+        impoTotal=self.calcular_Quitar_Ico(datos,daportare,oficina,self.__config['impoConsumo'])
         list(map(self.adicionar_DefMST,datos))
         if propinas:datos.append(propinas)
         datos.append(impoTotal)
-        for x in datos:print(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}')
+        aux=self.separar_NotasCredito(datos)
+        Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,self.__auxFecha)
+        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,self.__auxFecha)
+        self.__db.cerrarConexion()
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
@@ -213,7 +225,7 @@ class ReportsManager():
         list(map(separar,datos))
 
     #Calculamos los impuestos y los quitamos de los productos para dejarlos en una linea aparte.
-    def calcular_Quitar_Ico(self,datos:list,estacion:dict,impoConsumo:float)->list:
+    def calcular_Quitar_Ico(self,datos:list,daportare:bool,oficina:int,impoConsumo:float)->list:
         aux=0
         def calcular(dat:list)->None:
             nonlocal aux
@@ -223,8 +235,8 @@ class ReportsManager():
                 if impoConsumo==valor:aux+=dat[9]*Decimal(valor)
             else:dat[9]=abs(round(dat[9]))
         list(map(calcular,datos))
-        conjer=self.buscar_conceptoJer('impConsumo',estacion['daportare'],False)
-        impuesto=[conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],estacion['oficina'],'','','',round(aux)]
+        conjer=self.buscar_conceptoJer('impConsumo',daportare,False)
+        impuesto=[conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],oficina,'','','',round(aux)]
         return impuesto
     
     #En base a ladefiniciones (1,2,3,4,5,18,20.....etc), asignamos las M, S o T y añadimos la oficina de venta que produce el producto
@@ -245,6 +257,15 @@ class ReportsManager():
             dat[6]=aux[0]
         else:dat[6]=f"No_def ->{dat[6]}<-"
 
+    #Separa las notas credito
+    def separar_NotasCredito(self,datos:list)->list:
+        vtas,notas=[],[]
+        def validar(dato:list,aux:dict)->None:
+            val=next(filter(lambda x: x['concepto']==dato[0] and x['jerarquia']==dato[4],self.__concepJerDev.values()),None)
+            if val!=None:notas.append(dato)
+            else:vtas.append(dato)
+        list(map(lambda x:validar(x,self.__concepJer),datos))
+        return (vtas,notas)
 
 if __name__=='__main__':
     prueba=ReportsManager()

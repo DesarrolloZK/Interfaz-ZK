@@ -4,21 +4,91 @@ import pyodbc
 from copy import deepcopy
 from ftplib import FTP 
 from ftplib import error_perm
-from Persistencia import Archivos
 
 #Clase para establecer la conexion con la base de datos
-class ConexionDB():
-            
-    def cagarConf(self,configuraciones:Archivos)->None:
-        self.__configuraciones=configuraciones
-        
-    #Funcion en cargada de realizar la conexion y retornar true si se establece la conexion
-    #y retornar flase si no se establece dicha conexion
-    def conectar(self,ipcaps)->bool:
+class ManagerDB():
+    
+    #Traemos las configuraciones
+    def cagarConf(self,configuraciones:dict)->None:self.__configuraciones=configuraciones
+
+    #Realizamos la conexion a la base de datos de la interfaz
+    def conectar_DBInterfaz(self)->bool:
+        try:
+            if self.__configuraciones:
+                self.__conectInterfaz=pyodbc.connect(f'DRIVER={self.__configuraciones["DriverDB"]};'+
+                                             f'SERVER={self.__configuraciones["SistemasInstanciaDB"]};'+
+                                             f'UID={self.__configuraciones["SistemasUID"]};'+
+                                             f'PWD={self.__configuraciones["SistemasPWD"]};'+
+                                             f'ENCRYPT={self.__configuraciones["SistemasENCRYPT"]}',
+                                             autocommit=True)
+                return True
+            else:return False
+        except Exception:return False
+
+    #Verificamos si esta creada la base de datos de la interfaz, si no es asi la creamos
+    def comprobar_DBInterfaz(self)->bool:
+        try:
+            cursor=self.__conectInterfaz.cursor()
+            db=self.__configuraciones["InterfazDB"]
+            cursor.execute(f"SELECT COUNT(*) FROM sys.databases WHERE name='{db}';")
+            r=cursor.fetchone()
+            if r[0]>0:return True
+            else:
+                cursor.execute(f'CREATE DATABASE {self.__configuraciones["InterfazDB"]};')
+                return True
+        except Exception: return False
+
+    #Verificamos si existe las tablas de la interfaz, si no las creamos
+    def comprobar_TablaInterfaz(self,punto:str)->bool:
+        try:
+            cursor=self.__conectInterfaz.cursor()
+            db=self.__configuraciones['InterfazDB']
+            tabla=punto.replace(' ','')
+            cursor.execute(f'use {db};')
+            cursor.execute(f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME ='{tabla}'")
+            r1=cursor.fetchone()
+            cursor.execute(f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_NAME ='{tabla}Fechas'")
+            r2=cursor.fetchone()
+            if not r1[0]>0:cursor.execute(self.__configuraciones['crearTabla'].replace("nombre",tabla))
+            if not r2[0]>0:cursor.execute(f'CREATE TABLE {tabla}Fechas(fecha date not null);')
+            return True
+        except Exception:return False
+
+    #Guardamos la consulta tal cual la traemos de las estaciones y guardamos las fechas
+    def guardar_ConsultaDia(self,datos,punto:str,hoy)->bool:
+        def preparar_Dato(dato:list)->tuple or None:
+            nonlocal fechasDB,fechas
+            if tuple([dato[1].date()]) not in fechasDB and dato[1].date()!=hoy:
+                if tuple([dato[1].date()]) not in fechas:fechas.append(tuple([dato[1].date()]))
+                return tuple(dato)
+            return None
+        try:
+            fechas=[]
+            tabla=punto.replace(' ','')
+            query=f'insert into {tabla}(numcheque,fechaPosteo,tipoProducto,codProducto,ofiProduce,cantidad,total,tipoDato,propinaObligatoria,propinaVoluntaria,subTotal,fechaPago) values(?,?,?,?,?,?,?,?,?,?,?,?);'
+            cursor=self.__conectInterfaz.cursor()
+            db=self.__configuraciones['InterfazDB']
+            cursor.execute(f'use {db};')
+            fechasDB=list(cursor.execute(f'select * from {tabla}Fechas;').fetchall())
+            fechasDB=list(map(lambda x:tuple(x),fechasDB))
+            aux=list(map(preparar_Dato,datos))
+            aux=list(filter(lambda x: x is not None,aux))
+            if aux and fechas:
+                cursor.executemany(query,aux)
+                cursor.executemany(f'insert into {tabla}Fechas(fecha) values(?);',fechas)
+                cursor.commit()
+                print('Consulta Guardada')
+            return True
+        except Exception as exc:
+            print(f"Error: {exc}")
+            return False
+
+    #Funcion encargada de realizar la conexion a cada estacion y retornar true si se establece la conexion o retornar false si no se establece dicha conexion
+    def conectar_Estacion(self,ipcaps)->bool:
         try:
             if self.__configuraciones:
                 self.__conect=pyodbc.connect(f'DRIVER={self.__configuraciones["DriverDB"]};'+
-                                             f'SERVER={ipcaps}{self.__configuraciones["ServerDB"]};'+
+                                             f'SERVER={ipcaps}{self.__configuraciones["InstanciaDB"]};'+
                                              f'DATABASE={self.__configuraciones["DATABASE"]};'+
                                              f'UID={self.__configuraciones["UID"]};'+
                                              f'PWD={self.__configuraciones["PWD"]};'+
@@ -26,20 +96,20 @@ class ConexionDB():
                 return True
             else:return False
         except Exception:return False
- 
+
     #Funcion para realizar consultas en la base de datos
-    #Esta funcion  es de prueba.
-    def consulta(self,query:str)->list:
+    def consulta_Estacion(self,query:str)->list:
         try:
             with self.__conect.cursor() as cursor:
                 cursor.execute(query+';')
                 aux=cursor.fetchall()
             consulta=deepcopy(aux)
-            self.__conect.close()
             return consulta
         except Exception: return []
 
-    def cerrarConexion(self):self.__conect.close()
+    def cerrarConexion(self):
+        self.__conect.close()
+        self.__conectInterfaz.close()
 
 #Clase para establecer la conexion con el servidor FTP
 class ConexionFTP():

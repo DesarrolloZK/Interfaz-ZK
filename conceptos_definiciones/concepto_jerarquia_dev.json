@@ -1,6 +1,6 @@
 {
     "1":{
-        "descripcion":"Dev venta comestibles",
+        "descripcion":"Dev venta comestibles 1",
         "concepto":"0024",
         "jerarquia":"000270000000000",
         "conceptodb":[1,6,8],
@@ -10,7 +10,7 @@
         "codigo":null
     },
     "2":{
-        "descripcion":"Dev venta comestibles",
+        "descripcion":"Dev venta comestibles 2",
         "concepto":"0024",
         "jerarquia":"000030000000000",
         "conceptodb":[3],
@@ -32,7 +32,7 @@
     "4":{
         "descripcion":"Dev venta comestibles daportare",
         "concepto":"0036",
-        "jerarquia":"000000000000000",
+        "jerarquia":"000270000000000",
         "conceptodb":[1,3,6,8],
         "impuesto":0.08,
         "aparte":false,
@@ -42,7 +42,7 @@
     "5":{
         "descripcion":"Dev venta licores daportare",
         "concepto":"0037",
-        "jerarquia":"000000000000000",
+        "jerarquia":"000170000000000",
         "conceptodb":[2],
         "impuesto":0.08,
         "aparte":false,
@@ -150,7 +150,7 @@
         "codigo":201611
     },
     "16":{
-        "descripcion":"Dev venta grabada",
+        "descripcion":"Dev venta grabada 1",
         "concepto":"0031",
         "jerarquia":"000180000000000",
         "conceptodb":[11],
@@ -160,7 +160,7 @@
         "codigo":null
     },
     "17":{
-        "descripcion":"Dev venta grabada",
+        "descripcion":"Dev venta grabada 2",
         "concepto":"0032",
         "jerarquia":"000180000000000",
         "conceptodb":[10,15],
