@@ -1,0 +1,142 @@
+{
+    "1":{
+        "descripcion":"Anulacion comestibles",
+        "concepto":"0041",
+        "jerarquia":"000270000000000",
+        "conceptodb":["0001","000270000000000"],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":false,
+        "codigo":null
+    },
+    "2":{
+        "descripcion":"Anulacion comestibles",
+        "concepto":"0041",
+        "jerarquia":"000030000000000",
+        "conceptodb":["0001","000030000000000"],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":false,
+        "codigo":null
+    },
+    "3":{
+        "descripcion":"Anulacion Comestibles Dapo",
+        "concepto":"0044",
+        "jerarquia":"000270000000000",
+        "conceptodb":["0004"],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "4":{
+        "descripcion":"Anulacion Venta Licores",
+        "concepto":"0042",
+        "jerarquia":"000170000000000",
+        "conceptodb":["0002"],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "5":{
+        "descripcion":"Anulacion Venta Licores Dapo",
+        "concepto":"0419",
+        "jerarquia":"000170000000000",
+        "conceptodb":["0019"],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "6":{
+        "descripcion":"Anulacion Total Impuesto al Consumo",
+        "concepto":"0045",
+        "jerarquia":"",
+        "conceptodb":["0005",""],
+        "impuesto":null,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "8":{
+        "descripcion":"Anulacion Propinas",
+        "concepto":"0047",
+        "jerarquia":"",
+        "conceptodb":["0007",""],
+        "impuesto":null,
+        "aparte":false,
+        "daportare":false,
+        "codigo":null
+    },
+    "9":{
+        "descripcion":"Anulacion Domicilios",
+        "concepto":"0410",
+        "jerarquia":"",
+        "conceptodb":["0010"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "10":{
+        "descripcion":"Anulacion Bonos",
+        "concepto":"0412",
+        "jerarquia":"",
+        "conceptodb":["0012","000180000000000"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "11":{
+        "descripcion":"Anulacion Venta Grabada",
+        "concepto":"0416",
+        "jerarquia":"",
+        "conceptodb":["0016","000180000000000"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "12":{
+        "descripcion":"Anulacion Venta Grabada",
+        "concepto":"0417",
+        "jerarquia":"",
+        "conceptodb":["0017","000180000000000"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "13":{
+        "descripcion":"Anulacion Venta excenta y no grabada",
+        "concepto":"0420",
+        "jerarquia":"",
+        "conceptodb":["0020","000180000000000"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "14":{
+        "descripcion":"Anulacion Otros Ingresos",
+        "concepto":"0423",
+        "jerarquia":"",
+        "conceptodb":["0023","000180000000000"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "15":{
+        "descripcion":"Anulacion Por Defecto",
+        "concepto":"Anulacion Concepto",
+        "jerarquia":"",
+        "conceptodb":["Concepto","XXXXXXXXXXXXXXX"],
+        "impuesto":0.08,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    }
+}

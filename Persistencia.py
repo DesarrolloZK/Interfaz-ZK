@@ -66,6 +66,16 @@ class Archivos():
         except FileNotFoundError:
             return {}
 
+    #lee el archivo de concepto_jerarquia_anulacion.json y devuelve un diciconario con dicha informacion
+    def traerAnulaciones()->dict:
+        try:
+            with open("conceptos_definiciones/concepto_jerarquia_anulacion.json","r") as jf:
+                conjerdev=json.load(jf)
+                jf.close()
+                return conjerdev
+        except FileNotFoundError:
+            return {}
+
     #Accede a la carpeta "consultas", luego a la subcarpeta "diaria" y luego accede a la carpeta del restaurante que se le indique para leer todos los txt que se encuentren alli, por ultimo junta toda la informacion en una sola lista y ese es el valor que retorna
     def traerConsultaDiaria(punto,ofi)->list:
         lista=[]
@@ -135,5 +145,4 @@ class Archivos():
                 jf.close()
                 return configuracion
         except FileNotFoundError:
-            print('aqui')
             return {}

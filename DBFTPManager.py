@@ -2,6 +2,8 @@
 #Libreria ftplib: Contiene todo el codigo necesario para manejar la conexion al servidor FTP
 import pyodbc
 from copy import deepcopy
+from datetime import datetime
+from datetime import timedelta
 from ftplib import FTP 
 from ftplib import error_perm
 
@@ -55,16 +57,13 @@ class ManagerDB():
         except Exception:return False
 
     #Guardamos la consulta tal cual la traemos de las estaciones y guardamos las fechas
-    def guardar_ConsultaDia(self,datos,punto:str,hoy)->bool:
-        def preparar_Dato(dato:list)->tuple or None:
+    def guardar_ConsultaDia(self,datos,punto:str,hoy:datetime)->bool:
+        def preparar_Dato(dato:list)->tuple:
             nonlocal fechasDB,fechas
-            if tuple([dato[1].date()]) not in fechasDB and dato[1].date()!=hoy:
-                if tuple([dato[1].date()]) not in fechas:fechas.append(tuple([dato[1].date()]))
-                return tuple(dato)
-            return None
+            if self.aux_consultaDia(dato[1],hoy,fechasDB,fechas):return tuple(dato)
         try:
             fechas=[]
-            tabla=punto.replace(' ','')
+            tabla=punto.replace(" ","")
             query=f'insert into {tabla}(numcheque,fechaPosteo,tipoProducto,codProducto,ofiProduce,cantidad,total,tipoDato,propinaObligatoria,propinaVoluntaria,subTotal,fechaPago) values(?,?,?,?,?,?,?,?,?,?,?,?);'
             cursor=self.__conectInterfaz.cursor()
             db=self.__configuraciones['InterfazDB']
@@ -73,6 +72,7 @@ class ManagerDB():
             fechasDB=list(map(lambda x:tuple(x),fechasDB))
             aux=list(map(preparar_Dato,datos))
             aux=list(filter(lambda x: x is not None,aux))
+            print(fechas)
             if aux and fechas:
                 cursor.executemany(query,aux)
                 cursor.executemany(f'insert into {tabla}Fechas(fecha) values(?);',fechas)
@@ -82,6 +82,21 @@ class ManagerDB():
         except Exception as exc:
             print(f"Error: {exc}")
             return False
+
+    #Es una funcion auxiliar que verifica si un dato esta en el rango de fecha correcto, para guardarlos en la base de datos
+    def aux_consultaDia(self,dato:datetime,hoy:datetime,fechasDb:list,fechas:list)->bool:
+        auxHoy=hoy.replace(hour=3,minute=0,second=0,microsecond=0)
+        ini=dato.replace(hour=3,minute=0,second=0,microsecond=0)
+        fin=ini+timedelta(days=1)
+        if tuple([dato.date()]) not in fechasDb:
+            if tuple([dato.date()]) not in fechas and dato.date()!=hoy.date():fechas.append(tuple([dato.date()]))
+            if dato.date()==hoy.date() and dato>auxHoy:return False
+            if dato<ini or dato>=fin:return False
+            return True
+        return False
+
+
+        
 
     #Funcion encargada de realizar la conexion a cada estacion y retornar true si se establece la conexion o retornar false si no se establece dicha conexion
     def conectar_Estacion(self,ipcaps)->bool:

@@ -191,7 +191,7 @@
     },
     "20":{
         "descripcion":"Por defecto",
-        "concepto":"XXXX",
+        "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
         "impuesto":null,
@@ -201,7 +201,7 @@
     },
     "21":{
         "descripcion":"Por defecto daportare",
-        "concepto":"XXXX",
+        "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
         "impuesto":null,

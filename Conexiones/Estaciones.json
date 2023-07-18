@@ -1,25 +1,24 @@
-{   
-    "21":{
-        "punto": "Michelle Colina",
-        "ip": "190.145.201.22",
+{   "3":{
+    "punto": "Pravda",
+    "ip": "172.19.101.101",
+    "daportare": false,
+    "oficina":1345,
+    "oficina2":null,
+    "defAparte":0
+    },
+    "15":{
+        "punto": "Luna",
+        "ip": "172.19.101.121",
         "daportare": false,
-        "oficina":1398,
+        "oficina":1330,
         "oficina2":null,
         "defAparte":0
     },
-    "22":{
-        "punto": "Watakushi 93",
-        "ip": "190.147.30.64",
+    "7":{
+        "punto": "Amarti Usaquen",
+        "ip": "172.19.31.17",
         "daportare": false,
-        "oficina":1385,
-        "oficina2":null,
-        "defAparte":0
-    },
-    "23":{
-        "punto": "Diner Santafe",
-        "ip": "181.57.147.142",
-        "daportare": false,
-        "oficina":1332,
+        "oficina":1810,
         "oficina2":null,
         "defAparte":0
     }

@@ -29,9 +29,10 @@ class ReportsManager():
         self.__estaciones=Archivos.traerEstaciones()
         self.__concepJer=Archivos.traerConcepJerar()
         self.__concepJerDev=Archivos.traerConcepJerarDev()
+        self.__concepJerAnulaciones=Archivos.traerAnulaciones()
         self.__defM=Archivos.traerDefM()
         self.__defST=Archivos.traerDefST()
-        if self.__config and self.__concepJer and self.__concepJerDev and self.__defM and self.__defST and self.__estaciones:return True
+        if self.__config and self.__concepJer and self.__concepJerDev and self.__defM and self.__defST and self.__estaciones and self.__concepJerAnulaciones:return True
         return False
 
     #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, luego traem la consulta desde la DB de la estacion y guarda la consulta de la estacion en la db de sistemas
@@ -42,8 +43,9 @@ class ReportsManager():
                 if self.__db.comprobar_TablaInterfaz(estacion['punto']):
                     if self.__db.conectar_Estacion(estacion['ip']):
                         data=self.__db.consulta_Estacion(self.__config['consulta'])
-                        if self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy.date()):
+                        if self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy):
                             self.organizar_Vtas(data,estacion,1)
+                            self.__db.cerrarConexion()
                         else:print('No se pudo guardar la consulta en bruto')
                     else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
                 else:print('No es posible encontrar los datos')
@@ -52,7 +54,6 @@ class ReportsManager():
 
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
-        print(f'------------------>{estacion["punto"]}<--------------------------')
         self.__descuentos,self.__formasPago,propinas,vtas=[],[],[],[]
         vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],dias),data))
         vtas=list(filter(self.datovalido_descuentos,vtas))
@@ -81,10 +82,10 @@ class ReportsManager():
         list(map(self.adicionar_DefMST,datos))
         if propinas:datos.append(propinas)
         datos.append(impoTotal)
+        #list(map(lambda x:self.add_Anulaciones(x),datos))
         aux=self.separar_NotasCredito(datos)
         Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,self.__auxFecha)
         if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,self.__auxFecha)
-        self.__db.cerrarConexion()
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
@@ -231,9 +232,9 @@ class ReportsManager():
             nonlocal aux
             valor=self.valor_conceptoJer(dat[0],dat[4])
             if valor!=None:
-                dat[9]=abs(round(dat[9]/Decimal(1+valor)))
+                dat[9]=round(dat[9]/Decimal(1+valor))
                 if impoConsumo==valor:aux+=dat[9]*Decimal(valor)
-            else:dat[9]=abs(round(dat[9]))
+            else:dat[9]=round(dat[9])
         list(map(calcular,datos))
         conjer=self.buscar_conceptoJer('impConsumo',daportare,False)
         impuesto=[conjer['concepto'],self.__config['canal'],self.__config['sector'],'',conjer['jerarquia'],oficina,'','','',round(aux)]
@@ -256,6 +257,12 @@ class ReportsManager():
             dat[3]=aux[1]
             dat[6]=aux[0]
         else:dat[6]=f"No_def ->{dat[6]}<-"
+
+    '''
+    def add_Anulaciones(self,dato:list)->None:
+        if dato[8]<0:pass
+        r=next(filter(lambda x: dato[0] in x['conceptodb'] and dato[4] in x['conceptodb'],self.__concepJerAnulaciones.values()),{})
+        if r:dato[0]=r['concepto']'''
 
     #Separa las notas credito
     def separar_NotasCredito(self,datos:list)->list:
