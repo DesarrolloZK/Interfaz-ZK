@@ -44,7 +44,13 @@ class ReportsManager():
                     if self.__db.conectar_Estacion(estacion['ip']):
                         data=self.__db.consulta_Estacion(self.__config['consulta'])
                         if self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy):
-                            self.organizar_Vtas(data,estacion,1)
+                            if self.__hoy.day==1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:
+                                self.organizar_Vtas(data,estacion,False)
+                            elif self.__hoy.day<self.__config['dia_inicio'] or self.__hoy.day>self.__config['dia_fin']:
+                                self.organizar_Vtas(data,estacion,False)
+                            else:
+                                data=self.__db.consulta_InterfazDB(estacion['punto'])
+                                self.organizar_Vtas(data,estacion,True)
                             self.__db.cerrarConexion()
                         else:print('No se pudo guardar la consulta en bruto')
                     else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
@@ -53,9 +59,9 @@ class ReportsManager():
         else: print("No se pudo conectar con la instancia de la interfaz")
 
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
-    def organizar_Vtas(self,data:list,estacion:dict,dias:int)->None:
+    def organizar_Vtas(self,data:list,estacion:dict,bandera:bool)->None:
         self.__descuentos,self.__formasPago,propinas,vtas=[],[],[],[]
-        vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],dias),data))
+        vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],bandera),data))
         vtas=list(filter(self.datovalido_descuentos,vtas))
         vtas=list(map(self.fix_None_Convertir,vtas))
         propinas=self.calcular_Propinas(vtas,estacion)
@@ -82,25 +88,23 @@ class ReportsManager():
         list(map(self.adicionar_DefMST,datos))
         if propinas:datos.append(propinas)
         datos.append(impoTotal)
-        #list(map(lambda x:self.add_Anulaciones(x),datos))
+        list(map(lambda x:self.add_Anulaciones(x),datos))
         aux=self.separar_NotasCredito(datos)
         Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,self.__auxFecha)
         if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,self.__auxFecha)
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
-    def fecha_Valida(self,checkpost:datetime,checkclose:datetime,dias:int)->bool:
+    def fecha_Valida(self,checkpost:datetime,checkclose:datetime,bandera:bool)->bool:
+        auxfecha=deepcopy(self.__hoy)
         if checkclose!=None:
-            auxfecha=deepcopy(self.__hoy)
-            ini_intervalo=auxfecha.replace(hour=3,minute=0,second=0, microsecond=0)
-            ini_intervalo-=timedelta(days=dias)
-            fin_intervalo=auxfecha.replace(hour=3,minute=0,second=0,microsecond=0)
-            if dias==1:
-                f=ini_intervalo<=checkpost<fin_intervalo
-                return f
-            elif 1<dias<5:
-                fin_intervalo=fin_intervalo-timedelta(days=(dias-1))
-                return ini_intervalo<=checkpost<fin_intervalo
-            return False
+            if bandera:
+                ini_intervalo=auxfecha.replace(day=self.__config['dia_inicio'],hour=3,minute=0,second=0, microsecond=0)
+                fin_intervalo=auxfecha.replace(day=self.__config['dia_fin']+1,hour=3,minute=0,second=0, microsecond=0)
+            else:
+                ini_intervalo=auxfecha.replace(hour=3,minute=0,second=0, microsecond=0)
+                ini_intervalo-=timedelta(days=1)
+                fin_intervalo=auxfecha.replace(hour=3,minute=0,second=0,microsecond=0)
+            return ini_intervalo<=checkpost<fin_intervalo
         return False
 
     #Filtramos los datos que necesitamos (verifica si el campo 5 es mayor a 0 y diferete de Nulo, verifica si los campos 10 y 11 son distintos de None), el campo 7 indica si es un dato normal o es un descuento (2: descuento, 1: dato normal), y aqui mismo separamos los descuentos del resto de datos
@@ -258,11 +262,13 @@ class ReportsManager():
             dat[6]=aux[0]
         else:dat[6]=f"No_def ->{dat[6]}<-"
 
-    '''
+    #Verifica si alugno de los totales es negativo y verifica si es una anulacion para añadirle el concepto correspondiente
     def add_Anulaciones(self,dato:list)->None:
-        if dato[8]<0:pass
-        r=next(filter(lambda x: dato[0] in x['conceptodb'] and dato[4] in x['conceptodb'],self.__concepJerAnulaciones.values()),{})
-        if r:dato[0]=r['concepto']'''
+        if dato[9]<0:
+            r=next(filter(lambda x: dato[0] in x['conceptodb'] and dato[4] in x['conceptodb'],self.__concepJerAnulaciones.values()),{})
+            if r:dato[0]=r['concepto']
+        if type(dato[8])!=str:dato[8]=abs(dato[8])
+        if type(dato[9])!=str:dato[9]=abs(dato[9])
 
     #Separa las notas credito
     def separar_NotasCredito(self,datos:list)->list:

@@ -72,7 +72,6 @@ class ManagerDB():
             fechasDB=list(map(lambda x:tuple(x),fechasDB))
             aux=list(map(preparar_Dato,datos))
             aux=list(filter(lambda x: x is not None,aux))
-            print(fechas)
             if aux and fechas:
                 cursor.executemany(query,aux)
                 cursor.executemany(f'insert into {tabla}Fechas(fecha) values(?);',fechas)
@@ -95,8 +94,20 @@ class ManagerDB():
             return True
         return False
 
-
-        
+    #Traemos la informacion de la base de datos de la interfaz.
+    def consulta_InterfazDB(self,punto:str)->list:
+        try:
+            with self.__conectInterfaz.cursor() as cursor:
+                db=self.__configuraciones['InterfazDB']
+                tabla=punto.replace(' ','')
+                cursor.execute(f'use {db};')
+                cursor.execute(f'SELECT * FROM {tabla};')
+                aux=cursor.fetchall()
+            consulta=deepcopy(aux)
+            return consulta
+        except Exception as exc:
+            print(exc)
+            return []
 
     #Funcion encargada de realizar la conexion a cada estacion y retornar true si se establece la conexion o retornar false si no se establece dicha conexion
     def conectar_Estacion(self,ipcaps)->bool:
