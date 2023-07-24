@@ -57,7 +57,7 @@ class ManagerDB():
         except Exception:return False
 
     #Guardamos la consulta tal cual la traemos de las estaciones y guardamos las fechas
-    def guardar_ConsultaDia(self,datos,punto:str,hoy:datetime)->bool:
+    def guardar_ConsultaDia(self,datos,punto:str,hoy:datetime)->None:
         def preparar_Dato(dato:list)->tuple:
             nonlocal fechasDB,fechas
             if self.aux_consultaDia(dato[1],hoy,fechasDB,fechas):return tuple(dato)
@@ -76,11 +76,8 @@ class ManagerDB():
                 cursor.executemany(query,aux)
                 cursor.executemany(f'insert into {tabla}Fechas(fecha) values(?);',fechas)
                 cursor.commit()
-                print('Consulta Guardada')
-            return True
-        except Exception as exc:
-            print(f"Error: {exc}")
-            return False
+            print(f'Informacion Guardada de las fechas: {fechas}')
+        except Exception as exc:print(f"Error al guardar informacion: {exc}")
 
     #Es una funcion auxiliar que verifica si un dato esta en el rango de fecha correcto, para guardarlos en la base de datos
     def aux_consultaDia(self,dato:datetime,hoy:datetime,fechasDb:list,fechas:list)->bool:

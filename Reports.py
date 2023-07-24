@@ -10,16 +10,23 @@ class ReportsManager():
     #Metodo constructor, este codigo se ejecutara apenas se genere una instancia de la clase
     def __init__(self)->None:self.__señal=self.cargar_Config()
 
-    def iniRutina(self,tiempo:int)->None:
+    #Esta metodo es el punto de inicio, aqui comprobmos que el tiempo de comprobacion y el tiempo uxiliar sea minimo de 10 minutos, tambien definimos el intervalo de tiempo en el que el programa esta activo y solo funciona si las configuraciones estan cargadas.
+    def iniRutina(self)->None:
         while True:
             if self.__señal:
-                list(map(self.analisis_DB,self.__estaciones.values()))
-                time.sleep(tiempo)
+                if self.__config['tiempoComprobacion']<600 or type(self.__config['tiempoComprobacion'])!=int:self.__config['tiempoComprobacion']=600 
+                if self.__config['tiempoAuxiliar']<600 or type(self.__config['tiempoAuxiliar'])!=int:self.__config['tiempoAuxiliar']=600
+                if self.__config['hora_inicio']>0 and self.__config['hora_fin']>0 and self.__config['hora_fin']>self.__config['hora_inicio']:
+                    if self.__config['hora_inicio']<=self.__hoy.hour<=self.__config['hora_fin']:
+                        list(map(self.analisis_DB,self.__estaciones.values()))
+                        time.sleep(self.__config['tiempoComprobacion']*60)
+                    time.sleep((24-(self.__config['hora_fin']-self.__config['hora_inicio']))*3600)
+                else:time.sleep(self.__config['tiempoAuxiliar']*60)
             else:
-                print(f"Archivos de configuracion incompletos en {tiempo/4/60} minutos se intentara de nuevo")
-                time.sleep(tiempo/4)        
+                print(f"Archivos de configuracion incompletos, en {self.__config['tiempoAuxiliar']} minutos se intentara de nuevo")
+                time.sleep(self.__config['tiempoAuxiliar']*60)    
 
-    #Traemos toda la condifuracion necesaria desde los archivos JSON y definimos las variables que utilizaremos, en este caso vtas como una lista vacia donde dejaremos los datos finales y hoy con la fecha actual
+    #Traemos toda la configuracion necesaria desde los archivos JSON y definimos las variables que utilizaremos, en este caso vtas como una lista vacia donde dejaremos los datos finales y hoy con la fecha actual
     def cargar_Config(self)->bool:
         self.__db=ManagerDB()
         self.__hoy=datetime.now()
@@ -35,28 +42,29 @@ class ReportsManager():
         if self.__config and self.__concepJer and self.__concepJerDev and self.__defM and self.__defST and self.__estaciones and self.__concepJerAnulaciones:return True
         return False
 
-    #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, luego traem la consulta desde la DB de la estacion y guarda la consulta de la estacion en la db de sistemas
+    #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, luego trae la consulta desde la DB de la estacion y guarda la consulta en la DB de la interfaz, comprueba los dias que se necesitan para hacer los reportes
     def analisis_DB(self,estacion:dict)->None:
         print(f'{estacion["punto"]}___________________________________')
-        if self.__db.conectar_DBInterfaz():
-            if self.__db.comprobar_DBInterfaz():
-                if self.__db.comprobar_TablaInterfaz(estacion['punto']):
-                    if self.__db.conectar_Estacion(estacion['ip']):
-                        data=self.__db.consulta_Estacion(self.__config['consulta'])
-                        if self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy):
-                            if self.__hoy.day==1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:
-                                self.organizar_Vtas(data,estacion,False)
-                            elif self.__hoy.day<self.__config['dia_inicio'] or self.__hoy.day>self.__config['dia_fin']:
-                                self.organizar_Vtas(data,estacion,False)
-                            else:
-                                data=self.__db.consulta_InterfazDB(estacion['punto'])
-                                self.organizar_Vtas(data,estacion,True)
-                            self.__db.cerrarConexion()
-                        else:print('No se pudo guardar la consulta en bruto')
-                    else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
-                else:print('No es posible encontrar los datos')
-            else: print("No se pudo conectar con la DB de la interfaz")
-        else: print("No se pudo conectar con la instancia de la interfaz")
+        if self.__db.conectar_DBInterfaz() and self.__db.comprobar_DBInterfaz() and self.__db.comprobar_TablaInterfaz(estacion['punto']):
+            if self.__db.conectar_Estacion(estacion['ip']):
+                data=self.__db.consulta_Estacion(self.__config['consulta'])
+                self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy)
+                if self.__hoy.day==1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:
+                    self.organizar_Vtas(data,estacion,False)
+                elif self.__config['dia_inicio']<=self.__hoy.day<=self.__config['dia_fin']:pass
+                elif self.__hoy.day==self.__config['dia_fin']+1:
+                    del data
+                    data=self.__db.consulta_InterfazDB(estacion['punto'])
+                    self.organizar_Vtas(data,estacion,True)
+                else:self.organizar_Vtas(data,estacion,False)
+                self.__db.cerrarConexion()
+            else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
+        else: print("Error en la DB de la interfaz")
+
+    def comprobar_Reportes()->bool:
+        def existe(nombre)->bool:
+            nombre.f'VTAS{ofi}')[1].split('.txt')[0],'%d%M%Y'
+        reportes=Archivos.traerNombreReportes()
 
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,bandera:bool)->None:
@@ -262,7 +270,7 @@ class ReportsManager():
             dat[6]=aux[0]
         else:dat[6]=f"No_def ->{dat[6]}<-"
 
-    #Verifica si alugno de los totales es negativo y verifica si es una anulacion para añadirle el concepto correspondiente
+    #Verifica si alguno de los totales es negativo y verifica si es una anulacion para añadirle el concepto correspondiente
     def add_Anulaciones(self,dato:list)->None:
         if dato[9]<0:
             r=next(filter(lambda x: dato[0] in x['conceptodb'] and dato[4] in x['conceptodb'],self.__concepJerAnulaciones.values()),{})
@@ -280,6 +288,4 @@ class ReportsManager():
         list(map(lambda x:validar(x,self.__concepJer),datos))
         return (vtas,notas)
 
-if __name__=='__main__':
-    prueba=ReportsManager()
-    prueba.iniRutina(tiempo=3600)
+if __name__=='__main__':ReportsManager().iniRutina()

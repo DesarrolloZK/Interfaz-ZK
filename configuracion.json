@@ -20,6 +20,10 @@
     "SistemasENCRYPT":"No",
     "InterfazDB":"zonakvtasdb",
     "crearTabla":"CREATE TABLE nombre(numcheque int,fechaPosteo datetime not null, tipoProducto int, codProducto int, ofiProduce int, cantidad int, total numeric(21,4), tipoDato int not null, propinaObligatoria numeric(21,4), propinaVoluntaria numeric(21,4), subTotal numeric(21,4), fechaPago datetime);",
+    "tiempoComprobacion":60,
+    "tiempoAuxiliar":15,
+    "hora_inicio":3,
+    "hora_fin":17,
     "dia_inicio":15,
     "dia_fin":18
 }

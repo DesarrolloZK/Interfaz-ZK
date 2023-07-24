@@ -96,8 +96,8 @@ class Archivos():
         except Exception:
             return lista
 
-    #Accede a la carpeta "Reportes", luego accede a la carpeta del restaurante que sele indica y extrae todos los nombres de los txt que encuentre
-    def traerNombreReportes(punto,ofi)->list:return os.listdir(f'Reportes/{punto}-{ofi}')
+    #Accede a la carpeta "VTAS", luego accede a la carpeta del restaurante que sele indica y extrae todos los nombres de los txt que encuentre
+    def traerNombreReportes(punto,ofi)->list:return os.listdir(f'VTAS/{punto}-{ofi}')
 
     #Escribe las consultas de todos los dias, y son dos tipos una consulta bruta que simplemente es la informacion tal cual se extraer de la DB y una consulta Diaria, que es una consulta filtrada por dia y por los tipos de datos validos
     def escribirConsulta(self,datos:list,punto:str,ofi:str,my,tipo:str)->bool:
