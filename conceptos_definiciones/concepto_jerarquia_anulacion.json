@@ -84,12 +84,22 @@
         "concepto":"0412",
         "jerarquia":"",
         "conceptodb":["0012","000180000000000"],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null
     },
     "11":{
+        "descripcion":"Anulacion Bonos",
+        "concepto":"0412",
+        "jerarquia":"",
+        "conceptodb":["0012","000180000000000"],
+        "impuesto":null,
+        "aparte":true,
+        "daportare":false,
+        "codigo":null
+    },
+    "12":{
         "descripcion":"Anulacion Venta Grabada",
         "concepto":"0416",
         "jerarquia":"",
@@ -99,7 +109,7 @@
         "daportare":false,
         "codigo":null
     },
-    "12":{
+    "13":{
         "descripcion":"Anulacion Venta Grabada",
         "concepto":"0417",
         "jerarquia":"",
@@ -109,7 +119,7 @@
         "daportare":false,
         "codigo":null
     },
-    "13":{
+    "14":{
         "descripcion":"Anulacion Venta excenta y no grabada",
         "concepto":"0420",
         "jerarquia":"",
@@ -119,7 +129,7 @@
         "daportare":false,
         "codigo":null
     },
-    "14":{
+    "15":{
         "descripcion":"Anulacion Otros Ingresos",
         "concepto":"0423",
         "jerarquia":"",
@@ -129,7 +139,7 @@
         "daportare":false,
         "codigo":null
     },
-    "15":{
+    "16":{
         "descripcion":"Anulacion Por Defecto",
         "concepto":"Anulacion Concepto",
         "jerarquia":"",

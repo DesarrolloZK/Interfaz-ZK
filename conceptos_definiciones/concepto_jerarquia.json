@@ -114,12 +114,22 @@
         "concepto":"0012",
         "jerarquia":"000180000000000",
         "conceptodb":[12],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":false,
         "daportare":false,
         "codigo":null
     },
     "13":{
+        "descripcion":"Bonos Daportare",
+        "concepto":"0012",
+        "jerarquia":"000180000000000",
+        "conceptodb":[12],
+        "impuesto":null,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "14":{
         "descripcion":"Venta Grabada",
         "concepto":"0016",
         "jerarquia":"000180000000000",
@@ -129,7 +139,7 @@
         "daportare":false,
         "codigo":null
     },
-    "14":{
+    "15":{
         "descripcion":"Venta Grabada",
         "concepto":"0017",
         "jerarquia":"000180000000000",
@@ -139,7 +149,7 @@
         "daportare":false,
         "codigo":null
     },
-    "15":{
+    "16":{
         "descripcion":"Venta exenta y no grabada",
         "concepto":"0020",
         "jerarquia":"000180000000000",
@@ -149,7 +159,7 @@
         "daportare":false,
         "codigo":null
     },
-    "16":{
+    "17":{
         "descripcion":"Otros ingresos",
         "concepto":"0023",
         "jerarquia":"000180000000000",
@@ -159,7 +169,7 @@
         "daportare":false,
         "codigo":null
     },
-    "17":{
+    "18":{
         "descripcion":"Por defecto",
         "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
@@ -169,7 +179,7 @@
         "daportare":false,
         "codigo":null
     },
-    "18":{
+    "19":{
         "descripcion":"Por defecto daportare",
         "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",

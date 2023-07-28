@@ -42,32 +42,47 @@ class ReportsManager():
         if self.__config and self.__concepJer and self.__concepJerDev and self.__defM and self.__defST and self.__estaciones and self.__concepJerAnulaciones:return True
         return False
 
-    #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, luego trae la consulta desde la DB de la estacion y guarda la consulta en la DB de la interfaz, comprueba los dias que se necesitan para hacer los reportes
-    def analisis_DB(self,estacion:dict)->None:
-        print(f'{estacion["punto"]}___________________________________')
+    #Esta funcion comprueba la conexion a la DB de la estacion y la conexion a la DB de sistemas, verifica si existen datos para realizar el rpeorte, verifica si el reporte ya esta creado, si no esta creado trae la consulta desde la DB de la estacion y guarda la consulta en la DB de la interfaz, comprueba los dias que se necesitan para hacer los reportes e inicia el proceso de creacion del reporte
+    def analisis_DB(self,estacion:dict,data=[])->None:
+        print(f'{estacion["punto"]}:')
         if self.__db.conectar_DBInterfaz() and self.__db.comprobar_DBInterfaz() and self.__db.comprobar_TablaInterfaz(estacion['punto']):
             if self.__db.conectar_Estacion(estacion['ip']):
                 data=self.__db.consulta_Estacion(self.__config['consulta'])
+                if not data:return print("\tNo hay datos para crear el reporte")
                 self.__db.guardar_ConsultaDia(data,estacion['punto'],self.__hoy)
-                if self.__hoy.day==1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:
-                    self.organizar_Vtas(data,estacion,False)
-                elif self.__config['dia_inicio']<=self.__hoy.day<=self.__config['dia_fin']:pass
-                elif self.__hoy.day==self.__config['dia_fin']+1:
-                    del data
-                    data=self.__db.consulta_InterfazDB(estacion['punto'])
-                    self.organizar_Vtas(data,estacion,True)
-                else:self.organizar_Vtas(data,estacion,False)
+                if self.comprobar_Reportes(estacion,self.__auxFecha):
+                    if self.__hoy.day==1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:
+                        self.organizar_Vtas(data,estacion,False,self.__auxFecha)
+                    elif self.__config['dia_inicio']<=self.__hoy.day<=self.__config['dia_fin']:pass
+                    elif self.__hoy.day>self.__config['dia_fin']+1 or self.__config['dia_inicio']==None or self.__config['dia_fin']==None:self.organizar_Vtas(data,estacion,False,self.__auxFecha)
+                else:print(f"Reporte del dia {(self.__hoy-timedelta(days=1)).date()} ya esta creado")
+                if self.__config['dia_inicio']!=None and self.__config['dia_fin']!=None and self.__hoy.day>self.__config['dia_fin']:
+                    print(f'Reporte del dia {self.__config["dia_inicio"]} al {self.__config["dia_fin"]}->')
+                    auxFecha=self.__hoy.replace(day=self.__config['dia_fin']).strftime("%d%m%Y")
+                    if self.comprobar_Reportes(estacion,auxFecha):
+                        del data
+                        data=self.__db.consulta_InterfazDB(estacion['punto'])
+                        self.organizar_Vtas(data,estacion,True,auxFecha)
+                    else:print('\tYa esta creado')
                 self.__db.cerrarConexion()
-            else:print(f"No se pudo conectar a la DB de {estacion['punto']}")
-        else: print("Error en la DB de la interfaz")
+            else:print(f"\tNo se pudo conectar a la DB de {estacion['punto']}")
+        else: print("\tError en la DB de la interfaz")
 
-    def comprobar_Reportes()->bool:
-        def existe(nombre)->bool:
-            nombre.f'VTAS{ofi}')[1].split('.txt')[0],'%d%M%Y'
-        reportes=Archivos.traerNombreReportes()
+    #Comprobamos si el reporte ya esta hecho.
+    def comprobar_Reportes(self,estacion:dict,fecha:str)->bool:
+        bandera1,bandera2='',''
+        existe=lambda archivo,oficina: True if fecha==archivo.split(f'VTAS{oficina}')[1].split('.txt')[0] else False
+        reportes1=Archivos.traerNombreReportes(estacion['punto'],estacion['oficina'])
+        bandera1=next(filter(lambda archivo:existe(archivo,estacion['oficina']),reportes1),'')
+        if estacion['oficina2']!=None:
+            reportes2=Archivos.traerNombreReportes(estacion['punto'],estacion['oficina2'])
+            bandera2=next(filter(lambda archivo:existe(archivo,estacion['oficina2']),reportes2),'')
+            return bandera1=='' or bandera2==''
+        return bandera1==''
+
 
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
-    def organizar_Vtas(self,data:list,estacion:dict,bandera:bool)->None:
+    def organizar_Vtas(self,data:list,estacion:dict,bandera:bool,fecha:str)->None:
         self.__descuentos,self.__formasPago,propinas,vtas=[],[],[],[]
         vtas=list(filter(lambda x:self.fecha_Valida(x[1],x[11],bandera),data))
         vtas=list(filter(self.datovalido_descuentos,vtas))
@@ -82,24 +97,24 @@ class ReportsManager():
             ofi1=self.suma_Productos(ofi1)
             ofi2=self.add_ConJer(ofi2,estacion['oficina2'],estacion['daportare'])
             ofi2=self.suma_Productos(ofi2)
-            self.mst_impo_completar(ofi1,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas)
-            self.mst_impo_completar(ofi2,estacion['daportare'],estacion['oficina2'],estacion['punto'],propinas)
+            self.mst_impo_completar(ofi1,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas,fecha)
+            self.mst_impo_completar(ofi2,estacion['daportare'],estacion['oficina2'],estacion['punto'],propinas,fecha)
             del vtas
         else:
             vtas=self.add_ConJer(vtas,estacion['oficina'],estacion['daportare'])
             vtas=self.suma_Productos(vtas)
-            self.mst_impo_completar(vtas,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas)
+            self.mst_impo_completar(vtas,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas,fecha)
 
     #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST); tambien creamos los reportes
-    def mst_impo_completar(self,datos:list,daportare:bool,oficina:int,punto:str,propinas:list)->None:
+    def mst_impo_completar(self,datos:list,daportare:bool,oficina:int,punto:str,propinas:list,fecha:str)->None:
         impoTotal=self.calcular_Quitar_Ico(datos,daportare,oficina,self.__config['impoConsumo'])
         list(map(self.adicionar_DefMST,datos))
         if propinas:datos.append(propinas)
         datos.append(impoTotal)
         list(map(lambda x:self.add_Anulaciones(x),datos))
         aux=self.separar_NotasCredito(datos)
-        Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,self.__auxFecha)
-        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,self.__auxFecha)
+        Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,fecha)
+        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,fecha)
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,bandera:bool)->bool:

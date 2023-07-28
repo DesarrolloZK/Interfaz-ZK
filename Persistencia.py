@@ -97,19 +97,10 @@ class Archivos():
             return lista
 
     #Accede a la carpeta "VTAS", luego accede a la carpeta del restaurante que sele indica y extrae todos los nombres de los txt que encuentre
-    def traerNombreReportes(punto,ofi)->list:return os.listdir(f'VTAS/{punto}-{ofi}')
-
-    #Escribe las consultas de todos los dias, y son dos tipos una consulta bruta que simplemente es la informacion tal cual se extraer de la DB y una consulta Diaria, que es una consulta filtrada por dia y por los tipos de datos validos
-    def escribirConsulta(self,datos:list,punto:str,ofi:str,my,tipo:str)->bool:
+    def traerNombreReportes(punto:str,ofi:int)->list:
         try:
-            with open(f'Consultas/{tipo}/{punto}-{ofi}/{my}.txt','w') as wm:
-                list(map(lambda x:wm.write(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]};{x[10]}\n'),datos))
-                wm.close()
-            return True
-        except FileNotFoundError:
-            os.mkdir(f'Consultas/{tipo}/{punto}-{ofi}')
-            return self.escribirConsulta(datos,punto,ofi,my,tipo)
-        except Exception:return False
+            return os.listdir(f'VTAS/{punto}-{ofi}')
+        except FileNotFoundError:return []
 
     #Escribe los reportes, que son los archivos finales que se enviaran a SAP
     def escribirReportes(self,carpeta:str,datos:list,punto:str,ofi:str,fecha:str)->bool:
@@ -117,7 +108,7 @@ class Archivos():
             with open(f'{carpeta}/{punto}-{ofi}/VTAS{ofi}{fecha}.txt','w') as wm:
                 list(map(lambda x:wm.write(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}\n'),datos))
                 wm.close()
-            print(f'Reporte VTAS{ofi}{fecha}.txt creado en {carpeta}')
+            print(f'\tReporte VTAS{ofi}{fecha}.txt creado en {carpeta}')
             return True
         except FileNotFoundError:
             try:

@@ -114,7 +114,7 @@
         "concepto":"0029",
         "jerarquia":"000180000000000",
         "conceptodb":[12],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":false,
         "daportare":false,
         "codigo":null
@@ -124,7 +124,7 @@
         "concepto":"0029",
         "jerarquia":"000180000000000",
         "conceptodb":[12],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":false,
         "daportare":true,
         "codigo":null
