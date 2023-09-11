@@ -1,6 +1,6 @@
 {
     "1":{
-        "descripcion":"Venta Comestibles",
+        "descripcion":"Venta Comestibles 1",
         "concepto":"0001",
         "jerarquia":"000270000000000",
         "conceptodb":[1,6,8],
@@ -10,7 +10,7 @@
         "codigo":null
     },
     "2":{
-        "descripcion":"Venta Comestibles",
+        "descripcion":"Venta Comestibles 2",
         "concepto":"0001",
         "jerarquia":"000030000000000",
         "conceptodb":[3],
@@ -23,7 +23,7 @@
         "descripcion":"Venta Comestibles daportare",
         "concepto":"0004",
         "jerarquia":"000270000000000",
-        "conceptodb":[1,6,8,3],
+        "conceptodb":[1,3,6,8],
         "impuesto":0.08,
         "aparte":false,
         "daportare":true,
@@ -60,7 +60,7 @@
         "codigo":null
     },
     "7":{
-        "descripcion":"Total Impuesto al Consumo Daportare",
+        "descripcion":"Total Impuesto al Consumo Dapo",
         "concepto":"0005",
         "jerarquia":"",
         "conceptodb":["impConsumo"],
@@ -75,7 +75,7 @@
         "jerarquia":"",
         "conceptodb":["prop"],
         "impuesto":null,
-        "aparte":false,
+        "aparte":true,
         "daportare":false,
         "codigo":null
     },
@@ -130,7 +130,7 @@
         "codigo":null
     },
     "14":{
-        "descripcion":"Venta Grabada",
+        "descripcion":"Venta Grabada 1",
         "concepto":"0016",
         "jerarquia":"000180000000000",
         "conceptodb":[11],
@@ -140,7 +140,17 @@
         "codigo":null
     },
     "15":{
-        "descripcion":"Venta Grabada",
+        "descripcion":"Venta Grabada 1 Dapo",
+        "concepto":"0016",
+        "jerarquia":"000180000000000",
+        "conceptodb":[11],
+        "impuesto":0.05,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "16":{
+        "descripcion":"Venta Grabada 2",
         "concepto":"0017",
         "jerarquia":"000180000000000",
         "conceptodb":[10,15],
@@ -149,7 +159,17 @@
         "daportare":false,
         "codigo":null
     },
-    "16":{
+    "17":{
+        "descripcion":"Venta Grabada 2 Dapo",
+        "concepto":"0017",
+        "jerarquia":"000180000000000",
+        "conceptodb":[10,15],
+        "impuesto":0.19,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "18":{
         "descripcion":"Venta exenta y no grabada",
         "concepto":"0020",
         "jerarquia":"000180000000000",
@@ -159,7 +179,17 @@
         "daportare":false,
         "codigo":null
     },
-    "17":{
+    "19":{
+        "descripcion":"Venta exenta y no grabada dapo",
+        "concepto":"0020",
+        "jerarquia":"000180000000000",
+        "conceptodb":[4,13],
+        "impuesto":null,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "20":{
         "descripcion":"Otros ingresos",
         "concepto":"0023",
         "jerarquia":"000180000000000",
@@ -169,22 +199,32 @@
         "daportare":false,
         "codigo":null
     },
-    "18":{
+    "21":{
+        "descripcion":"Otros ingresos Dapo",
+        "concepto":"0023",
+        "jerarquia":"000180000000000",
+        "conceptodb":[14],
+        "impuesto":0.19,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "22":{
         "descripcion":"Por defecto",
         "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":false,
         "daportare":false,
         "codigo":null
     },
-    "19":{
+    "23":{
         "descripcion":"Por defecto daportare",
         "concepto":"Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":false,
         "daportare":true,
         "codigo":null

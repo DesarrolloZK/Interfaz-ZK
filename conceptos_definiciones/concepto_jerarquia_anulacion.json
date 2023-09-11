@@ -1,6 +1,6 @@
 {
     "1":{
-        "descripcion":"Anulacion comestibles",
+        "descripcion":"Anulacion comestibles 1",
         "concepto":"0041",
         "jerarquia":"000270000000000",
         "conceptodb":["0001","000270000000000"],
@@ -100,11 +100,11 @@
         "codigo":null
     },
     "12":{
-        "descripcion":"Anulacion Venta Grabada",
+        "descripcion":"Anulacion Venta Grabada 1",
         "concepto":"0416",
         "jerarquia":"",
         "conceptodb":["0016","000180000000000"],
-        "impuesto":0.08,
+        "impuesto":0.05,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -114,7 +114,7 @@
         "concepto":"0417",
         "jerarquia":"",
         "conceptodb":["0017","000180000000000"],
-        "impuesto":0.08,
+        "impuesto":0.05,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -124,7 +124,7 @@
         "concepto":"0420",
         "jerarquia":"",
         "conceptodb":["0020","000180000000000"],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -134,7 +134,7 @@
         "concepto":"0423",
         "jerarquia":"",
         "conceptodb":["0023","000180000000000"],
-        "impuesto":0.08,
+        "impuesto":0.19,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -144,7 +144,7 @@
         "concepto":"Anulacion Concepto",
         "jerarquia":"",
         "conceptodb":["Concepto","XXXXXXXXXXXXXXX"],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null

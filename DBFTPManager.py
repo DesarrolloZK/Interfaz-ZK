@@ -76,7 +76,7 @@ class ManagerDB():
                 cursor.executemany(query,aux)
                 cursor.executemany(f'insert into {tabla}Fechas(fecha) values(?);',fechas)
                 cursor.commit()
-                list(map(lambda x:print(f'Informacion guardada de: {x.date()}'),fechas))
+                list(map(lambda x:print(f'Informacion guardada de: {x[0]}'),fechas))
         except Exception as exc:print(f"Error al guardar informacion: {exc}")
 
     #Es una funcion auxiliar que verifica si un dato esta en el rango de fecha correcto, para guardarlos en la base de datos

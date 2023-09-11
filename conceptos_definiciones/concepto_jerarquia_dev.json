@@ -20,16 +20,6 @@
         "codigo":null
     },
     "3":{
-        "descripcion":"Dev venta licores",
-        "concepto":"0025",
-        "jerarquia":"000170000000000",
-        "conceptodb":[2],
-        "impuesto":0.08,
-        "aparte":false,
-        "daportare":false,
-        "codigo":null
-    },
-    "4":{
         "descripcion":"Dev venta comestibles daportare",
         "concepto":"0036",
         "jerarquia":"000270000000000",
@@ -37,6 +27,16 @@
         "impuesto":0.08,
         "aparte":false,
         "daportare":true,
+        "codigo":null
+    },
+    "4":{
+        "descripcion":"Dev venta licores",
+        "concepto":"0025",
+        "jerarquia":"000170000000000",
+        "conceptodb":[2],
+        "impuesto":0.08,
+        "aparte":false,
+        "daportare":false,
         "codigo":null
     },
     "5":{
@@ -53,7 +53,7 @@
         "descripcion":"Dev total impuesto al consumo",
         "concepto":"0026",
         "jerarquia":"",
-        "conceptodb":["ico"],
+        "conceptodb":["impConsumo"],
         "impuesto":null,
         "aparte":true,
         "daportare":false,
@@ -63,7 +63,7 @@
         "descripcion":"Dev total impuesto al consumo Dapo",
         "concepto":"0026",
         "jerarquia":"",
-        "conceptodb":["ico"],
+        "conceptodb":["impConsumo"],
         "impuesto":null,
         "aparte":true,
         "daportare":true,
@@ -74,7 +74,7 @@
         "concepto":"0027",
         "jerarquia":"",
         "conceptodb":["prop"],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":false,
         "codigo":null
@@ -84,7 +84,7 @@
         "concepto":"0027",
         "jerarquia":"",
         "conceptodb":["prop"],
-        "impuesto":0.08,
+        "impuesto":null,
         "aparte":true,
         "daportare":true,
         "codigo":null
@@ -130,26 +130,6 @@
         "codigo":null
     },
     "14":{
-        "descripcion":"Dev Descuentos",
-        "concepto":"0030",
-        "jerarquia":"000180000000000",
-        "conceptodb":["disc"],
-        "impuesto":0.08,
-        "aparte":true,
-        "daportare":false,
-        "codigo":201611
-    },
-    "15":{
-        "descripcion":"Dev Descuentos Daportare",
-        "concepto":"0030",
-        "jerarquia":"000180000000000",
-        "conceptodb":["disc"],
-        "impuesto":0.08,
-        "aparte":true,
-        "daportare":true,
-        "codigo":201611
-    },
-    "16":{
         "descripcion":"Dev venta grabada 1",
         "concepto":"0031",
         "jerarquia":"000180000000000",
@@ -159,7 +139,17 @@
         "daportare":false,
         "codigo":null
     },
-    "17":{
+    "15":{
+        "descripcion":"Dev venta grabada 1 Dapo",
+        "concepto":"0031",
+        "jerarquia":"000180000000000",
+        "conceptodb":[11],
+        "impuesto":0.05,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "16":{
         "descripcion":"Dev venta grabada 2",
         "concepto":"0032",
         "jerarquia":"000180000000000",
@@ -169,17 +159,37 @@
         "daportare":false,
         "codigo":null
     },
+    "17":{
+        "descripcion":"Dev venta grabada 2 Dapo",
+        "concepto":"0032",
+        "jerarquia":"000180000000000",
+        "conceptodb":[10,15],
+        "impuesto":0.19,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
     "18":{
         "descripcion":"Dev venta excenta y no grabada",
         "concepto":"0034",
         "jerarquia":"000180000000000",
         "conceptodb":[13],
-        "impuesto":-1.0,
+        "impuesto":null,
         "aparte":false,
         "daportare":false,
         "codigo":null
     },
     "19":{
+        "descripcion":"Dev venta excenta y no grabada Dapo",
+        "concepto":"0034",
+        "jerarquia":"000180000000000",
+        "conceptodb":[13],
+        "impuesto":null,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "20":{
         "descripcion":"Dev otros ingresos",
         "concepto":"0035",
         "jerarquia":"000180000000000",
@@ -189,9 +199,19 @@
         "daportare":false,
         "codigo":null
     },
-    "20":{
-        "descripcion":"Por defecto",
-        "concepto":"Concepto",
+    "21":{
+        "descripcion":"Dev otros ingresos Dapo",
+        "concepto":"0035",
+        "jerarquia":"000180000000000",
+        "conceptodb":[14],
+        "impuesto":0.19,
+        "aparte":false,
+        "daportare":true,
+        "codigo":null
+    },
+    "22":{
+        "descripcion":"Dev por defecto",
+        "concepto":"Dev Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
         "impuesto":null,
@@ -199,9 +219,9 @@
         "daportare":false,
         "codigo":null
     },
-    "21":{
-        "descripcion":"Por defecto daportare",
-        "concepto":"Concepto",
+    "23":{
+        "descripcion":"Dev por defecto Dapo",
+        "concepto":"Dev Concepto",
         "jerarquia":"XXXXXXXXXXXXXXX",
         "conceptodb":[null],
         "impuesto":null,

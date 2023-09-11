@@ -80,7 +80,6 @@ class ReportsManager():
             return bandera1=='' or bandera2==''
         return bandera1==''
 
-
     #Primeros filtros para que la informacion quede separada, por fecha valida, dato valido, separar los descuentos, corregir los datos None que vengan de la DB, calcular las propinas, aplicar los descuentos y sumar los valores por codigo de producto (PPD)
     def organizar_Vtas(self,data:list,estacion:dict,bandera:bool,fecha:str)->None:
         self.__descuentos,self.__formasPago,propinas,vtas=[],[],[],[]
