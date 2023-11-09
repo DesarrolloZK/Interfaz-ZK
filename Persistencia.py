@@ -103,9 +103,9 @@ class Archivos():
         except FileNotFoundError:return []
 
     #Escribe los reportes, que son los archivos finales que se enviaran a SAP
-    def escribirReportes(self,carpeta:str,datos:list,punto:str,ofi:str,fecha:str)->bool:
+    def escribirReportes(self,carpeta:str,datos:list,punto:str,ofi:str,tipo:str,fecha:str)->bool:
         try:
-            with open(f'{carpeta}/{punto}-{ofi}/VTAS{ofi}{fecha}.txt','w') as wm:
+            with open(f'{carpeta}/{punto}-{ofi}/{tipo}{ofi}{fecha}.txt','w') as wm:
                 list(map(lambda x:wm.write(f'{x[0]};{x[1]};{x[2]};{x[3]};{x[4]};{x[5]};{x[6]};{x[7]};{x[8]};{x[9]}\n'),datos))
                 wm.close()
             print(f'\tReporte VTAS{ofi}{fecha}.txt creado en {carpeta}')
@@ -113,10 +113,10 @@ class Archivos():
         except FileNotFoundError:
             try:
                 os.mkdir(f'{carpeta}/{punto}-{ofi}')
-                return self.escribirReportes(carpeta,datos,punto,ofi,fecha)
+                return self.escribirReportes(carpeta,datos,punto,ofi,tipo,fecha)
             except FileNotFoundError:
                 os.mkdir(f'{carpeta}')
-                return self.escribirReportes(carpeta,datos,punto,ofi,fecha)
+                return self.escribirReportes(carpeta,datos,punto,ofi,tipo,fecha)
         except Exception:return False
     
     #Accede a la carpeta de reportes y envia al FTP el reporte que se le indique

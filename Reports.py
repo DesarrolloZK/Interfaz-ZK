@@ -112,8 +112,8 @@ class ReportsManager():
         datos.append(impoTotal)
         list(map(lambda x:self.add_Anulaciones(x),datos))
         aux=self.separar_NotasCredito(datos)
-        Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,fecha)
-        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,fecha)
+        Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,'VTAS',fecha)
+        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,'VTMS',fecha)
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,bandera:bool)->bool:

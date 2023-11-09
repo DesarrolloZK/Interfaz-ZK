@@ -11,7 +11,7 @@
     "userFtp":"Administrador",
     "passwordFtp":"!MiCros2022%",
     "carpetaVtas":"VTAS",
-    "carpetaNotasCredito":"NC_VTAS",
+    "carpetaNotasCredito":"VTMS",
     "canal":"10",
     "sector":"00",
     "SistemasInstanciaDB":"181.48.67.101\\INTERFAZ",
