@@ -104,7 +104,7 @@ class ReportsManager():
             vtas=self.suma_Productos(vtas)
             self.mst_impo_completar(vtas,estacion['daportare'],estacion['oficina'],estacion['punto'],propinas,fecha)
 
-    #Aqui añadimos MST, calculamos los impuestos, agregamos conceptos, jerarquias y traslados (MST); tambien creamos los reportes
+    #Calcula los impuestos, agrega conceptos, jerarquias y traslados (MST); tambien crea los reportes
     def mst_impo_completar(self,datos:list,daportare:bool,oficina:int,punto:str,propinas:list,fecha:str)->None:
         impoTotal=self.calcular_Quitar_Ico(datos,daportare,oficina,self.__config['impoConsumo'])
         list(map(self.adicionar_DefMST,datos))
@@ -146,8 +146,9 @@ class ReportsManager():
     
     #Se verifica gracias al detailtype 4, si un cheque es una factura normal o una nota credito y en base a eso marcamos cada producto con True o False para posteriormente asignarle un concepto normal o de devolucion
     def marcar_NotaCredito(self,datos:list)->None:
+        aux=[]
         def marcar(forma:list,dat:list)-> None:
-            if forma[0]==dat[0] and forma[6]<0:dat[12]=True
+            if forma[0]==dat[0] and forma[10]<0:dat[12]=True
         aux=lambda x:list(map(lambda y:marcar(x,y),datos))
         list(map(aux,self.__formasPago))
 
