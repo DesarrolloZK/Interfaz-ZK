@@ -5,7 +5,8 @@
         "daportare": false,
         "oficina":1820,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "2":{
         "punto": "La Mar",
@@ -13,7 +14,8 @@
         "daportare": false,
         "oficina":1855,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "3":{
         "punto": "Pravda",
@@ -21,7 +23,8 @@
         "daportare": false,
         "oficina":1345,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "4":{
         "punto": "Watakushi 82",
@@ -29,7 +32,8 @@
         "daportare": false,
         "oficina":1331,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "5":{
         "punto": "Diner Unicentro",
@@ -37,7 +41,8 @@
         "daportare": false,
         "oficina":1318,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "6":{
         "punto":"Michelle Unicentro",
@@ -45,7 +50,8 @@
         "daportare":false,
         "oficina":1335,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "7":{
         "punto": "Amarti Usaquen",
@@ -53,7 +59,8 @@
         "daportare": false,
         "oficina":1810,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "8":{
         "punto": "Barra Unicentro",
@@ -61,7 +68,8 @@
         "daportare": false,
         "oficina":1891,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "9":{
         "punto": "Barra 109",
@@ -69,7 +77,8 @@
         "daportare": false,
         "oficina":1870,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "10":{
         "punto": "Barra 82",
@@ -77,7 +86,8 @@
         "daportare": false,
         "oficina":1865,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "11":{
         "punto": "Illy 87",
@@ -85,7 +95,8 @@
         "daportare": false,
         "oficina":1325,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "12":{
         "punto": "Illy Unicentro",
@@ -93,7 +104,8 @@
         "daportare": false,
         "oficina":1320,
         "oficina2":1355,
-        "defAparte":8        
+        "defAparte":8,
+        "directo":true 
     },
     "13":{
         "punto": "Hamakom Unicentro",
@@ -101,7 +113,8 @@
         "daportare": false,
         "oficina":1399,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "14":{
         "punto": "Koi",
@@ -109,7 +122,8 @@
         "daportare": false,
         "oficina":1329,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "15":{
         "punto": "Luna",
@@ -117,7 +131,8 @@
         "daportare": false,
         "oficina":1330,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "16":{
         "punto": "Michelle 82",
@@ -125,7 +140,8 @@
         "daportare": false,
         "oficina":1890,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "17":{
         "punto": "Pomeriggio",
@@ -133,7 +149,8 @@
         "daportare": false,
         "oficina":1805,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "18":{
         "punto": "Dapo 82",
@@ -141,7 +158,8 @@
         "daportare": true,
         "oficina":1305,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "19":{
         "punto": "Dapo Colina",
@@ -149,7 +167,8 @@
         "daportare": true,
         "oficina":1395,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "20":{
         "punto": "Dapo Usaquen",
@@ -157,7 +176,8 @@
         "daportare": true,
         "oficina":1885,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "21":{
         "punto": "Michelle Colina",
@@ -165,7 +185,8 @@
         "daportare": false,
         "oficina":1398,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "22":{
         "punto": "Watakushi 93",
@@ -173,7 +194,8 @@
         "daportare": false,
         "oficina":1385,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     },
     "23":{
         "punto": "Diner Santafe",
@@ -181,6 +203,7 @@
         "daportare": false,
         "oficina":1332,
         "oficina2":null,
-        "defAparte":0
+        "defAparte":0,
+        "directo":true
     }
 }

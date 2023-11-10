@@ -120,10 +120,10 @@ class Archivos():
         except Exception:return False
     
     #Accede a la carpeta de reportes y envia al FTP el reporte que se le indique
-    def enviarAFtp(self,ftp:FTP,punto:str,ofi:str,fecha:str)->bool:
+    def enviarAFtp(self,ftp:FTP,carpeta:str,punto:str,ofi:str,tipo:str,fecha:str)->bool:
         try:
-            with open(f'Reportes/{punto}-{ofi}/VTAS{ofi}{fecha}.txt','rb') as reporte:
-                ftp.storlines(f'STOR VTAS{ofi}{fecha}.txt',reporte)
+            with open(f'{carpeta}/{punto}-{ofi}/{tipo}{ofi}{fecha}.txt','rb') as reporte:
+                ftp.storlines(f'STOR {tipo}{ofi}{fecha}.txt',reporte)
                 return True
         except FileNotFoundError:return False
         except Exception:return False

@@ -141,21 +141,22 @@ class ConexionFTP():
         self.__ftp=FTP()
 
     #Establecemos la conexion y manejamos los posibles errores cuando se realice dicha conexion
-    def conn(self,ip,user,password,carpeta)->int:
+    def conn(self,ip:str,user:str,password:str,carpeta:str)->bool:
         try:
             self.__ftp.connect(ip)
             self.__ftp.login(user=user,passwd=password)
-            self.__ftp.cwd(carpeta)
             if carpeta not in self.__ftp.nlst():self.__ftp.mkd(carpeta)
-            return 0
-        except TimeoutError:return 1
-        except error_perm as e:
-            if str(e).split()[0]=='530':return 2
-            elif str(e).split()[0]=='550':return 3
-            else:return 4
+            self.__ftp.cwd(carpeta)
+            return True
+        except Exception as e:
+            print(f'Error al conectar ftp: {e}')
+            return False
     
     #Devolvemos el objeto que contiene la conexion con el FTP para manejarlo en otra clase
     def getconn(self)->FTP:return self.__ftp
 
     #Cerramos la conexion con el FTP
-    def closeconn(self)->None:self.__ftp.quit()
+    def closeconn(self)->None:
+        if self.__ftp.sock!=None:self.__ftp.quit()
+
+    

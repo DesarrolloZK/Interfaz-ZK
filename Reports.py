@@ -1,4 +1,5 @@
 import time
+import os
 from copy import deepcopy
 from decimal import Decimal
 from DBFTPManager import *
@@ -18,7 +19,9 @@ class ReportsManager():
                 if self.__config['tiempoAuxiliar']<600 or type(self.__config['tiempoAuxiliar'])!=int:self.__config['tiempoAuxiliar']=600
                 if self.__config['hora_inicio']>0 and self.__config['hora_fin']>0 and self.__config['hora_fin']>self.__config['hora_inicio']:
                     if self.__config['hora_inicio']<=self.__hoy.hour<=self.__config['hora_fin']:
+                        os.system('cls')
                         list(map(self.analisis_DB,self.__estaciones.values()))
+                        self.__ftp.closeconn()
                         time.sleep(self.__config['tiempoComprobacion']*60)
                     time.sleep((24-(self.__config['hora_fin']-self.__config['hora_inicio']))*3600)
                 else:time.sleep(self.__config['tiempoAuxiliar']*60)
@@ -29,6 +32,7 @@ class ReportsManager():
     #Traemos toda la configuracion necesaria desde los archivos JSON y definimos las variables que utilizaremos, en este caso vtas como una lista vacia donde dejaremos los datos finales y hoy con la fecha actual
     def cargar_Config(self)->bool:
         self.__db=ManagerDB()
+        self.__ftp=ConexionFTP()
         self.__hoy=datetime.now()
         self.__auxFecha=(self.__hoy-timedelta(days=1)).strftime('%d%m%Y')
         self.__config=Archivos.traerConfiguraciones()
@@ -112,8 +116,12 @@ class ReportsManager():
         datos.append(impoTotal)
         list(map(lambda x:self.add_Anulaciones(x),datos))
         aux=self.separar_NotasCredito(datos)
+        ftpFlag=self.__ftp.conn(self.__config['ipFtp'],self.__config['userFtp'],self.__config['passwordFtp'],self.__config['carpetaFtp'])
         Archivos().escribirReportes(self.__config['carpetaVtas'],aux[0],punto,oficina,'VTAS',fecha)
-        if aux[1]:Archivos().escribirReportes(self.__config['carpetaNotasCredito'],aux[1],punto,oficina,'VTMS',fecha)
+        if ftpFlag and Archivos().enviarAFtp(self.__ftp.getconn(),self.__config['carpetaVtas'],punto,oficina,'VTAS',fecha):print('\tVTAS Enviado a FTP')
+        if aux[1]:
+            Archivos().escribirReportes(self.__config['carpetaVtms'],aux[1],punto,oficina,'VTMS',fecha)
+            if ftpFlag and Archivos().enviarAFtp(self.__ftp.getconn(),self.__config['carpetaVtms'],punto,oficina,'VTMS',fecha):print('\tVTMS Enviado a FTP')
 
     #Filtramos la informacion que necesitamos segun la fecha, definimos un intervalo comprendido entre las 3:00 am del dia anterior hasta las 2:59am del dia actual
     def fecha_Valida(self,checkpost:datetime,checkclose:datetime,bandera:bool)->bool:
@@ -144,7 +152,7 @@ class ReportsManager():
         aux.append(False)
         return aux
     
-    #Se verifica gracias al detailtype 4, si un cheque es una factura normal o una nota credito y en base a eso marcamos cada producto con True o False para posteriormente asignarle un concepto normal o de devolucion
+    #Verifica que el campo "subtotal" sea menor a 0, si es asi, eso quiere decir que los productos fueron anulados o devueltos. "Nota credito"
     def marcar_NotaCredito(self,datos:list)->None:
         aux=[]
         def marcar(forma:list,dat:list)-> None:
